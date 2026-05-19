@@ -1,0 +1,26 @@
+<div class="layer-item" id="item-kecamatan">
+    <div class="layer-header" onclick="toggleGeoJsonLayer('kecamatan', 'batas_kecamatan_LN.geojson')">
+        <span style="flex:1;">Batas Kecamatan</span>
+        <i class="fas fa-cloud-arrow-down dl-btn" title="Download Shapefile" onclick="event.stopPropagation(); downloadData('batas_administrasi.zip')"></i>
+        <div class="status-dot"></div>
+    </div>
+    ...
+</div>
+
+<div class="layer-item" id="item-persil">
+    <div class="layer-header" onclick="toggleGeoJsonLayer('persil', 'persil_polan.geojson')">
+        <span style="flex:1;">Persil Tanah / ZNT</span>
+        <i class="fas fa-cloud-arrow-down dl-btn" title="Download Shapefile" onclick="event.stopPropagation(); downloadData('persil_polan.zip')"></i>
+        <div class="status-dot"></div>
+    </div>
+    ...
+</div>
+
+<div class="layer-item" id="item-pl">
+    <div class="layer-header" onclick="toggleGeoJsonLayer('pl', 'pl_polan.geojson')">
+        <span style="flex:1;">Penggunaan Lahan</span>
+        <i class="fas fa-cloud-arrow-down dl-btn" title="Download Shapefile" onclick="event.stopPropagation(); downloadData('pl_polan.zip')"></i>
+        <div class="status-dot"></div>
+    </div>
+    ...
+</div>
