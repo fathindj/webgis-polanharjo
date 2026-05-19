@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
 
     <style>
         :root {
@@ -23,7 +24,7 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: var(--text); overflow-x: hidden; }
         body.locked { overflow: hidden; }
 
-        /* --- SISTEM MULTI-HALAMAN (DALAM 1 FILE) --- */
+        /* --- SISTEM MULTI-HALAMAN --- */
         .page-view { display: none; width: 100%; }
         .page-view.active { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -121,14 +122,21 @@
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(255,255,255,0.2); border-radius: 2px; }
 
         #map { height: 100%; width: 100%; z-index: 1; }
+        
+        /* Menggeser kontrol leaflet bawaan agar tidak tertutup fitur lain */
         .leaflet-bottom.leaflet-right { display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 25px !important; margin-right: 25px !important; gap: 12px; }
         .leaflet-bar { border: none !important; margin: 0 !important; }
         .custom-control-btn { background: var(--glass) !important; backdrop-filter: blur(10px); color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; width: 44px !important; height: 44px !important; display: flex !important; align-items: center; justify-content: center; border-radius: 12px !important; cursor: pointer; font-size: 1.1rem; transition: var(--transition); text-decoration: none; margin-bottom: 5px; }
         .custom-control-btn:hover { background: var(--accent) !important; color: white !important; transform: scale(1.05); }
         
-        .legend-box { background: var(--glass); backdrop-filter: blur(15px); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); max-width: 220px; margin-bottom: 5px; display: none; color: white; font-size: 0.8rem;}
-        .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
-        .legend-color { width: 15px; height: 15px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.5); }
+        /* --- LEGEND STYLING --- */
+        .legend-box { background: var(--glass); backdrop-filter: blur(15px); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); width: 240px; margin-bottom: 5px; display: none; color: white; font-size: 0.8rem; box-shadow: 0 10px 25px rgba(0,0,0,0.4); max-height: 250px; overflow-y: auto; }
+        .legend-title { font-size: 0.75rem; color: var(--accent); margin-bottom: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        .legend-section { margin-bottom: 12px; }
+        .legend-section-title { font-weight: 600; font-size: 0.75rem; color: #94a3b8; margin-bottom: 6px; }
+        .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; font-size: 0.72rem; }
+        .legend-color { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.3); flex-shrink: 0; }
+        .legend-line { width: 16px; height: 3px; flex-shrink: 0; }
         
         .leaflet-popup-content-wrapper { background: var(--glass); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; }
         .leaflet-popup-tip { background: var(--glass); }
@@ -137,6 +145,10 @@
         .attr-table td { padding: 5px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .custom-pin { width: 32px; height: 32px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
         .custom-pin i { transform: rotate(45deg); color: white; font-size: 12px; }
+        
+        /* Menyesuaikan warna toolbar Geoman biar agak gelap sesuai tema web */
+        .leaflet-pm-toolbar .button-container a { background-color: rgba(15, 23, 42, 0.85) !important; color: white !important; border-color: rgba(255,255,255,0.1) !important; }
+        .leaflet-pm-toolbar .button-container a:hover { background-color: var(--accent) !important; }
     </style>
 </head>
 <body class="locked">
@@ -339,6 +351,7 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
 
     <script>
         // --- LOGIC LOGIN POPUP ---
@@ -390,9 +403,32 @@
 
         var map = L.map('map', { center: centerPos, zoom: defaultZoom, layers: [satellite], zoomControl: false });
 
+        // --- FITUR SCALE BAR (SKALA PETA) ---
+        L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
+
+        // --- FITUR DIGITASI GIS (GEOMAN) SEPERTI BHUMI ATR ---
+        map.pm.addControls({
+            position: 'topleft', // Posisi toolbar digitasi di kiri atas
+            drawMarker: true,    // Bikin Titik
+            drawPolygon: true,   // Bikin Poligon / Bidang Tanah
+            drawLine: true,      // Bikin Garis / Jalan
+            drawCircle: false,   // Dimatikan biar rapi
+            drawCircleMarker: false,
+            drawRectangle: true,
+            drawText: true,      // Bikin teks label
+            editMode: true,      // Fitur geser vertex (node)
+            dragMode: true,      // Pindah posisi poligon utuh
+            cutPolygon: true,    // Fitur POTONG BIDANG TANAH (Pemecahan Persil)
+            removalMode: true,   // Fitur Hapus hasil digitasi
+            rotateMode: true     // Putar poligon
+        });
+
+        // Set bahasa Geoman ke Indonesia biar gampang dipake
+        map.pm.setLang('id');
+
         const layers = {};
 
-        // Definisi Marker
+        // Definisi Marker Bawaan
         layers.camat = L.marker([-7.610573, 110.660003], { icon: L.divIcon({ className:'', html:'<div class="custom-pin" style="background:#ef4444"><i class="fas fa-building"></i></div>', iconSize:[32,32], iconAnchor:[16,32]}) }).bindPopup("Kantor Kecamatan Polanharjo");
         layers.wisata = L.marker([-7.6075, 110.6620], { icon: L.divIcon({ className:'', html:'<div class="custom-pin" style="background:#10b981"><i class="fas fa-umbrella-beach"></i></div>', iconSize:[32,32], iconAnchor:[16,32]}) }).bindPopup("Wisata Air Umbul Ponggok");
 
@@ -402,27 +438,27 @@
             desa: { color: "#3b82f6", weight: 2, fillOpacity: 0.1, dashArray: "5, 5" }
         };
 
-        // Otomatisasi Simbologi Warna-Warni Kategori Lahan (Berdasarkan Kolom "jenis")
+        // Otomatisasi Simbologi Warna Kategori Lahan
         function getWarnaPL(jenis) {
             if (!jenis) return "#34d399";
             var j = jenis.toLowerCase();
-            if (j.includes("sawah") || j.includes("tani")) return "#10b981"; // Hijau Subur
-            if (j.includes("permukiman") || j.includes("rumah") || j.includes("warga")) return "#f87171"; // Merah
-            if (j.includes("tegalan") || j.includes("kebun") || j.includes("ladang")) return "#a3e635"; // Hijau muda
-            if (j.includes("sungai") || j.includes("air") || j.includes("umbul")) return "#38bdf8"; // Biru Air
-            if (j.includes("jalan") || j.includes("akses")) return "#64748b"; // Abu-abu
-            return "#fbbf24"; // Sisa jenis lahan lainnya kuning keemasan
+            if (j.includes("sawah") || j.includes("tani")) return "#10b981"; 
+            if (j.includes("permukiman") || j.includes("rumah") || j.includes("warga")) return "#f87171"; 
+            if (j.includes("tegalan") || j.includes("kebun") || j.includes("ladang")) return "#a3e635"; 
+            if (j.includes("sungai") || j.includes("air") || j.includes("umbul")) return "#38bdf8"; 
+            if (j.includes("jalan") || j.includes("akses")) return "#64748b"; 
+            return "#fbbf24"; 
         }
 
-        // Otomatisasi Simbologi Warna-Warni Kategori Persil (Berdasarkan Kolom "status")
+        // Otomatisasi Simbologi Warna Kategori Persil
         function getWarnaPersil(status) {
             if (!status) return "#fcd34d";
             var s = status.toLowerCase();
-            if (s.includes("hak milik") || s.includes("shm")) return "#fbbf24"; // Kuning sertifikat
-            if (s.includes("hgb") || s.includes("guna bangunan")) return "#f97316"; // Oranye
-            if (s.includes("kas desa") || s.includes("bengkok") || s.includes("desa")) return "#22c55e"; // Hijau aset desa
-            if (s.includes("negara") || s.includes("pemerintah")) return "#94a3b8"; // Slate
-            if (s.includes("pakai") || s.includes("hak pakai")) return "#a855f7"; // Ungu
+            if (s.includes("hak milik") || s.includes("shm")) return "#fbbf24"; 
+            if (s.includes("hgb") || s.includes("guna bangunan")) return "#f97316"; 
+            if (s.includes("kas desa") || s.includes("bengkok") || s.includes("desa")) return "#22c55e"; 
+            if (s.includes("negara") || s.includes("pemerintah")) return "#94a3b8"; 
+            if (s.includes("pakai") || s.includes("hak pakai")) return "#a855f7"; 
             return "#e2e8f0"; 
         }
 
@@ -460,7 +496,6 @@
                     .then(data => {
                         layers[key] = L.geoJSON(data, {
                             style: function(feature) {
-                                // Keamanan deteksi kolom kapital / kecil di tabel spasial
                                 let jenisLahan = feature.properties.jenis || feature.properties.JENIS || feature.properties.Jenis;
                                 let statusPersil = feature.properties.status || feature.properties.STATUS || feature.properties.Status;
 
@@ -512,10 +547,11 @@
             document.body.removeChild(link);
         }
 
+        // --- SISTEM LEGENDA PETRA ---
         var legend = L.control({position: 'bottomright'});
         legend.onAdd = function (map) { 
             var div = L.DomUtil.create('div', 'legend-box'); div.id = 'legend'; 
-            div.innerHTML = '<h4 style="font-size:0.7rem; color:var(--accent); margin-bottom:10px; font-weight:800;">LEGENDA TEMA</h4><div id="legend-content">Pilih layer spasial untuk memuat legenda.</div>'; 
+            div.innerHTML = '<div class="legend-title">Legenda Peta</div><div id="legend-content">Pilih layer di panel untuk melihat legenda.</div>'; 
             return div; 
         };
         legend.addTo(map);
@@ -525,21 +561,43 @@
             const content = document.getElementById('legend-content'); 
             let html = ""; let active = false;
 
+            if (map.hasLayer(layers.kecamatan)) {
+                active = true;
+                html += `<div class="legend-section">
+                            <div class="legend-section-title">Administrasi Kecamatan</div>
+                            <div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #ef4444;"></div> Batas Kecamatan</div>
+                         </div>`;
+            }
+
+            if (map.hasLayer(layers.desa)) {
+                active = true;
+                html += `<div class="legend-section">
+                            <div class="legend-section-title">Administrasi Desa</div>
+                            <div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #3b82f6;"></div> Batas Desa</div>
+                         </div>`;
+            }
+
             if (map.hasLayer(layers.pl)) {
                 active = true;
-                html += `<div style="margin-bottom:8px;"><b>Simbologi Guna Lahan</b></div>
-                         <div class="legend-item"><div class="legend-color" style="background:#10b981"></div> Lahan Pertanian / Sawah</div>
-                         <div class="legend-item"><div class="legend-color" style="background:#f87171"></div> Kawasan Permukiman</div>
-                         <div class="legend-item"><div class="legend-color" style="background:#a3e635"></div> Kebun / Tegalan</div>
-                         <div class="legend-item"><div class="legend-color" style="background:#38bdf8"></div> Perairan / Aliran Sungai</div>`;
+                html += `<div class="legend-section">
+                            <div class="legend-section-title">Penggunaan Lahan</div>
+                            <div class="legend-item"><div class="legend-color" style="background:#10b981"></div> Pertanian / Sawah</div>
+                            <div class="legend-item"><div class="legend-color" style="background:#f87171"></div> Permukiman Warga</div>
+                            <div class="legend-item"><div class="legend-color" style="background:#a3e635"></div> Kebun / Tegalan</div>
+                            <div class="legend-item"><div class="legend-color" style="background:#38bdf8"></div> Sungai / Aliran Air</div>
+                            <div class="legend-item"><div class="legend-color" style="background:#64748b"></div> Jaringan Jalan</div>
+                         </div>`;
             }
+
             if (map.hasLayer(layers.persil)) {
                 active = true;
-                html += `<div style="margin-top:10px; margin-bottom:8px;"><b>Simbologi Status Persil</b></div>
-                         <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div> Hak Milik (SHM)</div>
-                         <div class="legend-item"><div class="legend-color" style="background:#f97316"></div> Hak Guna Bangunan (HGB)</div>
-                         <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div> Aset Kas Lahan Desa</div>
-                         <div class="legend-item"><div class="legend-color" style="background:#a855f7"></div> Lahan Hak Pakai</div>`;
+                html += `<div class="legend-section">
+                            <div class="legend-section-title">Status Persil Tanah</div>
+                            <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div> Hak Milik (SHM)</div>
+                            <div class="legend-item"><div class="legend-color" style="background:#f97316"></div> Hak Guna Bangunan (HGB)</div>
+                            <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div> Kas Lahan Desa</div>
+                            <div class="legend-item"><div class="legend-color" style="background:#a855f7"></div> Lahan Hak Pakai</div>
+                         </div>`;
             }
 
             legendBox.style.display = active ? 'block' : 'none'; 
