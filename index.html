@@ -81,9 +81,8 @@
         /* Wisata Box Layout */
         .wisata-box { flex: 1.2; min-width: 300px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
         .wisata-img-container { width: 100%; height: 250px; border-radius: 15px; overflow: hidden; position: relative; }
-        .wisata-img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-        .wisata-img-container:hover img { transform: scale(1.05); }
-        .wisata-badge { position: absolute; top: 15px; left: 15px; background: var(--accent); color: white; padding: 6px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        /* Badge untuk video */
+        .wisata-badge { position: absolute; top: 15px; left: 15px; background: var(--accent); color: white; padding: 6px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10; pointer-events: none; }
         
         @media (max-width: 768px) { .profil-grid { grid-template-columns: 1fr; } .admin-wisata-wrapper { flex-direction: column; padding: 25px; } }
         footer { background:#020617; padding:30px; text-align:center; color:#475569; font-size:0.8rem; }
@@ -123,7 +122,6 @@
 
         #map { height: 100%; width: 100%; z-index: 1; }
         
-        /* Menggeser kontrol leaflet bawaan agar tidak tertutup fitur lain */
         .leaflet-bottom.leaflet-right { display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 25px !important; margin-right: 25px !important; gap: 12px; }
         .leaflet-bar { border: none !important; margin: 0 !important; }
         .custom-control-btn { background: var(--glass) !important; backdrop-filter: blur(10px); color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; width: 44px !important; height: 44px !important; display: flex !important; align-items: center; justify-content: center; border-radius: 12px !important; cursor: pointer; font-size: 1.1rem; transition: var(--transition); text-decoration: none; margin-bottom: 5px; }
@@ -146,9 +144,10 @@
         .custom-pin { width: 32px; height: 32px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
         .custom-pin i { transform: rotate(45deg); color: white; font-size: 12px; }
         
-        /* Menyesuaikan warna toolbar Geoman biar agak gelap sesuai tema web */
+        /* Modifikasi style Geoman biar gelap elegan & ikon download pas posisinya */
         .leaflet-pm-toolbar .button-container a { background-color: rgba(15, 23, 42, 0.85) !important; color: white !important; border-color: rgba(255,255,255,0.1) !important; }
         .leaflet-pm-toolbar .button-container a:hover { background-color: var(--accent) !important; }
+        .leaflet-pm-icon.fa-download { display: flex !important; justify-content: center; align-items: center; font-size: 14px; line-height: 30px; }
     </style>
 </head>
 <body class="locked">
@@ -255,12 +254,12 @@
                     </div>
 
                     <div class="wisata-box">
-                        <div class="wisata-img-container">
-                            <div class="wisata-badge"><i class="fas fa-umbrella-beach"></i> Wisata Air Polanharjo</div>
-                            <img src="https://drive.google.com/uc?export=view&id=1KGWohnFy_Gd4qARqesu4fPOtRiwEpZyA" alt="Wisata Umbul Polanharjo">
+                        <div class="wisata-img-container" style="height: auto; aspect-ratio: 16/9; background: #000;">
+                            <div class="wisata-badge"><i class="fas fa-video"></i> Profil Wilayah</div>
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qtT3APyW-VA" title="Video Profil Wilayah Polanharjo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius: 15px;"></iframe>
                         </div>
                         <div>
-                            <h4 style="color: white; font-size: 1.25rem; margin-bottom: 8px;">Potensi Wisata Alam & Umbul</h4>
+                            <h4 style="color: white; font-size: 1.25rem; margin-bottom: 8px;">Potensi Wisata Alam & Wilayah</h4>
                             <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6;">
                                 Polanharjo memiliki kekayaan alam yang melimpah, terutama potensi wisata air atau <b>"Umbul"</b> yang berasal dari mata air alami sebening kaca. Destinasi wisata ini tidak hanya menjadi daya tarik rekreasi favorit bagi wisatawan dari berbagai daerah, tetapi juga memutar roda perekonomian lokal melalui pemberdayaan Badan Usaha Milik Desa (BUMDes) dan menghidupkan ekosistem UMKM bagi masyarakat sekitar.
                             </p>
@@ -377,7 +376,7 @@
             }, 600);
         }
 
-        // --- LOGIC GANTI HALAMAN (SPA) ---
+        // --- LOGIC GANTI HALAMAN ---
         function bukaPeta() {
             document.getElementById('halaman-beranda').classList.remove('active');
             document.getElementById('halaman-peta').classList.add('active');
@@ -394,7 +393,7 @@
             window.scrollTo(0,0);
         }
 
-        // --- KONFIGURASI WEBGIS (STATIS GEOJSON) ---
+        // --- KONFIGURASI PETA (WEBGIS) ---
         const centerPos = [-7.6105, 110.6600];
         const defaultZoom = 14; 
 
@@ -403,42 +402,67 @@
 
         var map = L.map('map', { center: centerPos, zoom: defaultZoom, layers: [satellite], zoomControl: false });
 
-        // --- FITUR SCALE BAR (SKALA PETA) ---
+        // --- FITUR SKALA PETA ---
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
-        // --- FITUR DIGITASI GIS (GEOMAN) SEPERTI BHUMI ATR ---
+        // --- FITUR DIGITASI GEOMAN (KAYAK BHUMI ATR) ---
+        // Pindahin toolbar ke kanan atas (topright)
         map.pm.addControls({
-            position: 'topleft', // Posisi toolbar digitasi di kiri atas
-            drawMarker: true,    // Bikin Titik
-            drawPolygon: true,   // Bikin Poligon / Bidang Tanah
-            drawLine: true,      // Bikin Garis / Jalan
-            drawCircle: false,   // Dimatikan biar rapi
+            position: 'topright', 
+            drawMarker: true,
+            drawPolygon: true,
+            drawLine: true,
+            drawCircle: false,
             drawCircleMarker: false,
             drawRectangle: true,
-            drawText: true,      // Bikin teks label
-            editMode: true,      // Fitur geser vertex (node)
-            dragMode: true,      // Pindah posisi poligon utuh
-            cutPolygon: true,    // Fitur POTONG BIDANG TANAH (Pemecahan Persil)
-            removalMode: true,   // Fitur Hapus hasil digitasi
-            rotateMode: true     // Putar poligon
+            drawText: true,
+            editMode: true,
+            dragMode: true,
+            cutPolygon: true,   // Alat potong bidang tanah
+            removalMode: true,  // Hapus digitasi
+            rotateMode: true
+        });
+        map.pm.setLang('id'); // Pake bahasa Indonesia
+
+        // Bikin tombol baru di toolbar Geoman buat Download hasil digitasi
+        map.pm.Toolbar.createCustomControl({
+            name: 'DownloadGeoJSON',
+            block: 'custom',
+            title: 'Download Hasil Digitasi',
+            className: 'leaflet-pm-icon fas fa-download',
+            onClick: () => {
+                var drawnLayers = map.pm.getGeomanDrawLayers();
+                if (drawnLayers.length === 0) {
+                    alert("Lu belum bikin digitasi apa-apa nih di peta!");
+                    return;
+                }
+                var fc = { type: "FeatureCollection", features: [] };
+                drawnLayers.forEach(layer => {
+                    if (layer.toGeoJSON) {
+                        fc.features.push(layer.toGeoJSON());
+                    }
+                });
+                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fc));
+                var dlAnchorElem = document.createElement('a');
+                dlAnchorElem.setAttribute("href", dataStr);
+                dlAnchorElem.setAttribute("download", "hasil_digitasi.geojson");
+                document.body.appendChild(dlAnchorElem);
+                dlAnchorElem.click();
+                dlAnchorElem.remove();
+            }
         });
 
-        // Set bahasa Geoman ke Indonesia biar gampang dipake
-        map.pm.setLang('id');
-
+        // --- LAYER DATA ---
         const layers = {};
 
-        // Definisi Marker Bawaan
         layers.camat = L.marker([-7.610573, 110.660003], { icon: L.divIcon({ className:'', html:'<div class="custom-pin" style="background:#ef4444"><i class="fas fa-building"></i></div>', iconSize:[32,32], iconAnchor:[16,32]}) }).bindPopup("Kantor Kecamatan Polanharjo");
         layers.wisata = L.marker([-7.6075, 110.6620], { icon: L.divIcon({ className:'', html:'<div class="custom-pin" style="background:#10b981"><i class="fas fa-umbrella-beach"></i></div>', iconSize:[32,32], iconAnchor:[16,32]}) }).bindPopup("Wisata Air Umbul Ponggok");
 
-        // Styling Dasar Batas Administrasi
         const geojsonStyles = {
             kecamatan: { color: "#ef4444", weight: 3, fillOpacity: 0.1, dashArray: "10, 5" },
             desa: { color: "#3b82f6", weight: 2, fillOpacity: 0.1, dashArray: "5, 5" }
         };
 
-        // Otomatisasi Simbologi Warna Kategori Lahan
         function getWarnaPL(jenis) {
             if (!jenis) return "#34d399";
             var j = jenis.toLowerCase();
@@ -450,7 +474,6 @@
             return "#fbbf24"; 
         }
 
-        // Otomatisasi Simbologi Warna Kategori Persil
         function getWarnaPersil(status) {
             if (!status) return "#fcd34d";
             var s = status.toLowerCase();
