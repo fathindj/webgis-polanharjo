@@ -81,7 +81,6 @@
         /* Wisata Box Layout */
         .wisata-box { flex: 1.2; min-width: 300px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
         .wisata-img-container { width: 100%; height: 250px; border-radius: 15px; overflow: hidden; position: relative; }
-        /* Badge untuk video */
         .wisata-badge { position: absolute; top: 15px; left: 15px; background: var(--accent); color: white; padding: 6px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10; pointer-events: none; }
         
         @media (max-width: 768px) { .profil-grid { grid-template-columns: 1fr; } .admin-wisata-wrapper { flex-direction: column; padding: 25px; } }
@@ -160,8 +159,8 @@
             </div>
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="input-group">
-                    <label>Username</label>
-                    <input type="text" id="username" placeholder="Masukkan username" required autocomplete="off">
+                    <label>Email Akses</label>
+                    <input type="email" id="email" placeholder="Masukkan alamat email Anda" required autocomplete="email">
                 </div>
                 <div class="input-group">
                     <label>Password</label>
@@ -235,7 +234,7 @@
                 <div class="admin-wisata-wrapper">
                     <div class="admin-info">
                         <h3><i class="fas fa-landmark" style="margin-right: 10px;"></i>Pusat Administrasi</h3>
-                        <p class="admin-desc">Pusat tata kelola dan pelayanan publik Polanharjo, mencakup skala kecamatan untuk koordinasi 18 desa, serta skala lokal di Kantor Desa Polan.</p>
+                        <p class="admin-desc">Pusat tata kelola dan pelayanan publik Polanharjo, mencakup skala kecamatan untuk koordinasi 18 desa.</p>
                         
                         <a href="https://polanharjo.klaten.go.id/tag/kecamatan-polanharjo" target="_blank" style="text-decoration: none; display: block;">
                             <div class="lokasi-box">
@@ -243,20 +242,12 @@
                                 <p>Berfungsi sebagai pusat koordinasi antar desa dengan lokasi strategis untuk pelayanan masyarakat.</p>
                             </div>
                         </a>
-
-                        <div class="lokasi-box" style="border-left-color: var(--accent);">
-                            <h4><i class="fas fa-map-pin" style="color: var(--accent);"></i> Kantor Desa Polan</h4>
-                            <p>Menjadi jantung pemerintahan lokal dan pemberdayaan UMKM bagi masyarakat desa setempat.</p>
-                            <div class="lokasi-alamat">
-                                <i class="fas fa-location-dot" style="margin-right: 5px;"></i> <b>Alamat:</b> Desa Polan, Kec. Polanharjo, Kabupaten Klaten, Jawa Tengah
-                            </div>
-                        </div>
                     </div>
 
                     <div class="wisata-box">
                         <div class="wisata-img-container" style="height: auto; aspect-ratio: 16/9; background: #000;">
                             <div class="wisata-badge"><i class="fas fa-video"></i> Profil Wilayah</div>
-                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qtT3APyW-VA" title="Video Profil Wilayah Polanharjo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius: 15px;"></iframe>
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qtT3APyW-VA?autoplay=1&mute=1" title="Video Profil Wilayah Polanharjo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius: 15px;"></iframe>
                         </div>
                         <div>
                             <h4 style="color: white; font-size: 1.25rem; margin-bottom: 8px;">Potensi Wisata Alam & Wilayah</h4>
