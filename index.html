@@ -6,20 +6,12 @@
     <title>Satu Data Polanharjo | Portal Informasi & GIS</title>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
 
     <style>
-        :root {
-            --bg-dark: #0f172a;
-            --glass: rgba(15, 23, 42, 0.85);
-            --accent: #f59e0b;
-            --primary: #3b82f6;
-            --text: #f8fafc;
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
+        :root { --bg-dark: #0f172a; --glass: rgba(15, 23, 42, 0.85); --accent: #f59e0b; --primary: #3b82f6; --text: #f8fafc; --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-dark); color: var(--text); overflow-x: hidden; }
         body.locked { overflow: hidden; }
@@ -29,89 +21,63 @@
         .page-view.active { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- LOGIN OVERLAY --- */
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.6s ease, visibility 0.6s ease; }
-        .login-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: 50px 40px; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: translateY(0); transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        #login-overlay.hidden .login-card { transform: translateY(-50px); }
-        .login-brand { font-size: 1.5rem; font-weight: 800; margin-bottom: 30px; color: white; letter-spacing: 1px; }
-        .login-brand i { color: var(--accent); font-size: 2rem; margin-bottom: 10px; display: block; }
+        /* --- LOGIN & HERO --- */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.6s ease; }
+        .login-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: 50px 40px; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px; font-weight: 600; }
-        .input-group input { width: 100%; padding: 14px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; font-family: inherit; outline: none; transition: var(--transition); }
-        .input-group input:focus { border-color: var(--accent); background: rgba(255,255,255,0.08); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
-        .login-btn { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: var(--transition); font-family: inherit; }
-        .login-btn:hover { background: #d97706; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); }
+        .input-group input { width: 100%; padding: 14px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; outline: none; }
+        .login-btn { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: var(--transition); }
+        .login-btn:hover { background: #d97706; transform: translateY(-2px); }
 
-        /* --- HERO SECTION --- */
         .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background-image: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center; background-attachment: fixed; padding: 0 20px; position: relative; }
-        .hero h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 800; margin-bottom: 15px; background: linear-gradient(to right, #ffffff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -2px; }
-        .hero p { font-size: 1.1rem; color: #cbd5e1; max-width: 600px; margin-bottom: 30px; line-height: 1.6; }
-        .explore-btn { padding: 16px 38px; background: var(--accent); color: white; text-decoration: none; border-radius: 50px; font-weight: 800; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4); transition: var(--transition); display: inline-flex; align-items: center; gap: 12px; border: none; cursor: pointer; font-family: inherit; font-size: 1rem; }
+        .hero h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 800; margin-bottom: 15px; background: linear-gradient(to right, #ffffff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .explore-btn { padding: 16px 38px; background: var(--accent); color: white; text-decoration: none; border-radius: 50px; font-weight: 800; display: inline-flex; align-items: center; gap: 12px; border: none; cursor: pointer; font-size: 1rem; transition: var(--transition); }
         .explore-btn:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(245, 158, 11, 0.3); }
 
-        /* --- PROFIL WILAYAH SECTION --- */
-        .profil-section { padding: 100px 20px; background-color: var(--bg-dark); position: relative; }
+        /* --- PROFIL & LAYOUT --- */
+        .profil-section { padding: 100px 20px; background-color: var(--bg-dark); }
         .profil-container { max-width: 1200px; margin: 0 auto; }
-        .profil-header { text-align: center; margin-bottom: 60px; }
-        .profil-header h2 { font-size: 2.5rem; color: white; margin-bottom: 15px; }
-        .profil-header h2 span { color: var(--accent); }
-        .profil-header p { color: #94a3b8; max-width: 800px; margin: 0 auto; line-height: 1.8; font-size: 1.05rem; }
         .profil-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .profil-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; transition: var(--transition); }
-        .profil-card:hover { background: rgba(255,255,255,0.04); transform: translateY(-5px); border-color: rgba(245, 158, 11, 0.3); }
+        .profil-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; }
+        .profil-card h3 { color: white; margin-bottom: 15px; }
         .profil-card i { font-size: 2.5rem; color: var(--accent); margin-bottom: 20px; display: block; }
-        .profil-card h3 { font-size: 1.5rem; color: white; margin-bottom: 15px; letter-spacing: 0.5px; }
-        .profil-card p { color: #cbd5e1; line-height: 1.7; font-size: 0.95rem; margin-bottom: 10px; }
-        .profil-card ul { list-style: none; margin-top: 15px; }
-        .profil-card ul li { color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 10px; }
-        .profil-card ul li::before { content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--primary); font-size: 0.9rem; margin-top: 2px; }
-
-        /* --- ADMIN & WISATA WRAPPER --- */
+        .profil-card p { color: #cbd5e1; line-height: 1.7; font-size: 0.95rem; }
+        
         .admin-wisata-wrapper { background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 20px; padding: 40px; display: flex; gap: 40px; flex-wrap: wrap; }
         .admin-info { flex: 1; min-width: 300px; }
-        .admin-info h3 { color: var(--accent); font-size: 1.8rem; margin-bottom: 20px; }
-        .admin-info p.admin-desc { color: #94a3b8; line-height: 1.7; margin-bottom: 25px; }
-        .lokasi-box { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 4px solid var(--primary); transition: var(--transition); }
-        .lokasi-box:hover { transform: translateX(5px); background: rgba(255,255,255,0.08); border-color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .lokasi-box h4 { color: white; margin-bottom: 8px; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
-        .lokasi-box p { color: #cbd5e1; font-size: 0.85rem; margin: 0; line-height: 1.5; }
-
+        .lokasi-box { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 4px solid var(--primary); }
         .wisata-box { flex: 1.2; min-width: 300px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
-        .wisata-img-container { width: 100%; height: 250px; border-radius: 15px; overflow: hidden; position: relative; }
-        .wisata-badge { position: absolute; top: 15px; left: 15px; background: var(--accent); color: white; padding: 6px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10; pointer-events: none; }
         
-        @media (max-width: 768px) { .profil-grid { grid-template-columns: 1fr; } .admin-wisata-wrapper { flex-direction: column; padding: 25px; } }
-        
-        /* --- FOOTER & SOSMED --- */
-        .footer-links a { color: #cbd5e1; font-size: 1.5rem; transition: var(--transition); text-decoration: none; }
-        .footer-links a:hover:nth-child(1) { color: var(--primary); transform: translateY(-3px); }
-        .footer-links a:hover:nth-child(2) { color: #e1306c; transform: translateY(-3px); }
+        footer a { color: #cbd5e1; font-size: 1.5rem; text-decoration: none; transition: var(--transition); }
+        footer a:hover { color: var(--primary); transform: translateY(-3px); }
 
         /* --- WEBGIS SECTION STYLES --- */
         #map-container { height: 100vh; width: 100vw; position: relative; }
         .gis-nav { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 95%; background: var(--glass); backdrop-filter: blur(20px); padding: 12px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 2000; color: white; }
-        .brand { font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
-        .nav-controls { display: flex; gap: 10px; }
-        
-        .nav-btn-back { background: var(--primary); color: white; padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; }
-        .nav-btn-back:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
-        .nav-btn-panel { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px 18px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.8rem; transition: var(--transition); display: flex; align-items: center; gap: 8px; }
-        .nav-btn-panel:hover { background: var(--accent); }
+        .nav-btn-back, .nav-btn-panel { padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; color: white; }
+        .nav-btn-back { background: var(--primary); }
+        .nav-btn-panel { background: rgba(255,255,255,0.05); }
 
+        /* SIDEBAR & LAYER ITEMS */
         .sidebar { position: absolute; top: 90px; left: -400px; width: 340px; background: var(--glass); backdrop-filter: blur(25px); border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); padding: 25px; z-index: 2000; transition: var(--transition); max-height: calc(100vh - 120px); overflow-y: auto; color: white; }
         .sidebar.active { left: 2.5%; }
-        .sidebar-section-title { font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; margin: 20px 0 10px 5px; display: flex; align-items: center; gap: 8px; }
-        .sidebar-section-title::after { content: ""; flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
         
+        .btn-upload { width: 100%; background: rgba(59, 130, 246, 0.2); border: 1px dashed var(--primary); color: white; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; transition: var(--transition); }
+        .btn-upload:hover { background: var(--primary); }
+
         .layer-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px; transition: var(--transition); overflow: hidden; }
         .layer-item.active { border-color: var(--accent); background: rgba(245, 158, 11, 0.1); }
         .layer-header { padding: 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
         
+        /* TOMBOL DOWNLOAD */
         .dl-btn { color: var(--primary); margin-right: 10px; font-size: 1.1rem; cursor: pointer; transition: color 0.3s; }
         .dl-btn:hover { color: var(--accent); }
 
         .status-dot { width: 8px; height: 8px; background: #475569; border-radius: 50%; transition: var(--transition); }
         .layer-item.active .status-dot { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        
+        /* OPACITY CONTROLS */
         .layer-controls { padding: 0 14px 14px 14px; display: none; align-items: center; gap: 10px; }
         .layer-item.active .layer-controls { display: flex; }
         .layer-controls label { font-size: 0.65rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; }
@@ -119,26 +85,18 @@
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: var(--accent); cursor: pointer; margin-top: -4px; box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: rgba(255,255,255,0.2); border-radius: 2px; }
 
-        /* Tombol Upload Data Lokal */
-        .btn-upload { width: 100%; background: rgba(59, 130, 246, 0.2); border: 1px dashed var(--primary); color: white; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 8px; transition: var(--transition); margin-bottom: 20px; font-family: inherit; }
-        .btn-upload:hover { background: var(--primary); }
-
         #map { height: 100%; width: 100%; z-index: 1; }
         
-        .leaflet-bottom.leaflet-right { display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 25px !important; margin-right: 25px !important; gap: 12px; }
-        .leaflet-bar { border: none !important; margin: 0 !important; }
-        .custom-control-btn { background: var(--glass) !important; backdrop-filter: blur(10px); color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; width: 44px !important; height: 44px !important; display: flex !important; align-items: center; justify-content: center; border-radius: 12px !important; cursor: pointer; font-size: 1.1rem; transition: var(--transition); text-decoration: none; margin-bottom: 5px; }
-        .custom-control-btn:hover { background: var(--accent) !important; color: white !important; transform: scale(1.05); }
-        
         /* --- LEGEND STYLING --- */
-        .legend-box { background: var(--glass); backdrop-filter: blur(15px); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); width: 240px; margin-bottom: 5px; display: block; color: white; font-size: 0.8rem; box-shadow: 0 10px 25px rgba(0,0,0,0.4); max-height: 350px; overflow-y: auto; }
-        .legend-title { font-size: 0.75rem; color: var(--accent); margin-bottom: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        .legend-box { background: var(--glass); backdrop-filter: blur(15px); border-radius: 15px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); width: 240px; display: block; color: white; font-size: 0.8rem; box-shadow: 0 10px 25px rgba(0,0,0,0.4); max-height: 350px; overflow-y: auto; }
+        .legend-title { font-size: 0.75rem; color: var(--accent); margin-bottom: 10px; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
         .legend-section { margin-bottom: 12px; }
         .legend-section-title { font-weight: 600; font-size: 0.75rem; color: #94a3b8; margin-bottom: 6px; }
         .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; font-size: 0.72rem; }
         .legend-color { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.3); flex-shrink: 0; }
         .legend-line { width: 16px; height: 3px; flex-shrink: 0; }
         
+        /* POPUP & PINS */
         .leaflet-popup-content-wrapper { background: var(--glass); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; }
         .leaflet-popup-tip { background: var(--glass); }
         .attr-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 5px; }
@@ -147,7 +105,7 @@
         .custom-pin { width: 32px; height: 32px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
         .custom-pin i { transform: rotate(45deg); color: white; font-size: 12px; }
         
-        .leaflet-pm-toolbar .button-container a { background-color: rgba(15, 23, 42, 0.85) !important; color: white !important; border-color: rgba(255,255,255,0.1) !important; }
+        .leaflet-pm-toolbar .button-container a { background-color: rgba(15, 23, 42, 0.85) !important; color: white !important; }
         .leaflet-pm-toolbar .button-container a:hover { background-color: var(--accent) !important; }
         .leaflet-pm-icon.fa-download { display: flex !important; justify-content: center; align-items: center; font-size: 14px; line-height: 30px; }
     </style>
@@ -156,20 +114,17 @@
 
     <div id="login-overlay">
         <div class="login-card">
-            <div class="login-brand">
-                <i class="fas fa-shield-halved"></i>
-                PORTAL LOGIN
-            </div>
+            <div class="login-brand"><i class="fas fa-shield-halved"></i> PORTAL LOGIN</div>
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="input-group">
                     <label>Email Akses</label>
-                    <input type="email" id="email" placeholder="Masukkan alamat email Anda" required autocomplete="email">
+                    <input type="email" id="email" placeholder="Masukkan alamat email" required autocomplete="email">
                 </div>
                 <div class="input-group">
                     <label>Password</label>
                     <input type="password" id="password" placeholder="Masukkan password" required>
                 </div>
-                <button type="submit" class="login-btn">MASUK SISTEM <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
+                <button type="submit" class="login-btn">MASUK SISTEM <i class="fas fa-arrow-right"></i></button>
             </form>
         </div>
     </div>
@@ -178,7 +133,7 @@
         <section class="hero" id="home">
             <h1>Sistem Spasial Polanharjo</h1>
             <p>Integrasi portal informasi publik dan data spasial presisi untuk mendukung Rencana Detail Tata Ruang (RDTR) dan perencanaan wilayah berbasis geospasial.</p>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                 <a href="#profil-wilayah" class="explore-btn"><i class="fas fa-book-open"></i> BACA PROFIL WILAYAH</a>
                 <button onclick="bukaPeta()" class="explore-btn" style="background: var(--primary);"><i class="fas fa-map-location-dot"></i> BUKA WEBGIS</button>
             </div>
@@ -192,49 +147,31 @@
                 </div>
 
                 <div class="profil-grid">
-                    <div class="profil-card">
-                        <i class="fas fa-mountain-sun"></i>
-                        <h3>Fisik & Alam</h3>
-                        <p>Terletak pada bentang alam Dataran Aluvial (62,7%) dan Dataran Fluvial Gunungapi (37,3%) dengan morfologi yang didominasi oleh lereng landai.</p>
-                    </div>
-                    <div class="profil-card">
-                        <i class="fas fa-users-viewfinder"></i>
-                        <h3>Demografi & Sosial</h3>
-                        <p>Tingkat kuantitas penduduk yang dinamis dan didominasi oleh kalangan usia produktif.</p>
-                    </div>
-                    <div class="profil-card">
-                        <i class="fas fa-map-location-dot"></i>
-                        <h3>Ekonomi & Lahan</h3>
-                        <p>Wilayah ini adalah "Lumbung Pangan" sekaligus destinasi ekowisata unggulan.</p>
-                    </div>
-                    <div class="profil-card">
-                        <i class="fas fa-tower-broadcast"></i>
-                        <h3>Infrastruktur & Kebencanaan</h3>
-                        <p>Diproyeksikan berkembang pesat seiring dengan akses <b>Jalan Tol Solo-Jogja</b>.</p>
-                    </div>
+                    <div class="profil-card"><i class="fas fa-mountain-sun"></i><h3>Fisik & Alam</h3><p>Terletak pada bentang alam Dataran Aluvial (62,7%) dan Dataran Fluvial Gunungapi (37,3%).</p></div>
+                    <div class="profil-card"><i class="fas fa-users-viewfinder"></i><h3>Demografi & Sosial</h3><p>Tingkat kuantitas penduduk yang dinamis dan didominasi oleh kalangan usia produktif.</p></div>
+                    <div class="profil-card"><i class="fas fa-map-location-dot"></i><h3>Ekonomi & Lahan</h3><p>Wilayah ini adalah "Lumbung Pangan" sekaligus destinasi ekowisata unggulan.</p></div>
+                    <div class="profil-card"><i class="fas fa-tower-broadcast"></i><h3>Infrastruktur & Kebencanaan</h3><p>Diproyeksikan berkembang pesat seiring dengan akses <b>Jalan Tol Solo-Jogja</b>.</p></div>
                 </div>
 
                 <div class="admin-wisata-wrapper">
                     <div class="admin-info">
-                        <h3><i class="fas fa-landmark" style="margin-right: 10px;"></i>Pusat Administrasi</h3>
+                        <h3><i class="fas fa-landmark"></i> Pusat Administrasi</h3>
                         <p class="admin-desc">Pusat tata kelola dan pelayanan publik Polanharjo, mencakup skala kecamatan untuk koordinasi 18 desa.</p>
-                        <a href="https://polanharjo.klaten.go.id/tag/kecamatan-polanharjo" target="_blank" style="text-decoration: none; display: block;">
+                        <a href="https://polanharjo.klaten.go.id/tag/kecamatan-polanharjo" target="_blank" style="text-decoration: none;">
                             <div class="lokasi-box">
-                                <h4><i class="fas fa-building" style="color: var(--primary);"></i> Kantor Kecamatan Polanharjo <i class="fas fa-external-link-alt" style="margin-left: auto; font-size: 0.8rem; color: #94a3b8;"></i></h4>
+                                <h4><i class="fas fa-building" style="color: var(--primary);"></i> Kantor Kecamatan Polanharjo</h4>
                                 <p>Berfungsi sebagai pusat koordinasi antar desa dengan lokasi strategis untuk pelayanan masyarakat.</p>
                             </div>
                         </a>
                     </div>
                     <div class="wisata-box">
-                        <div class="wisata-img-container" style="height: auto; aspect-ratio: 16/9; background: #000;">
-                            <div class="wisata-badge"><i class="fas fa-video"></i> Profil Wilayah</div>
-                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qtT3APyW-VA?autoplay=1&mute=1" title="Video Profil Wilayah Polanharjo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius: 15px;"></iframe>
+                        <div style="height: auto; aspect-ratio: 16/9; background: #000; border-radius: 15px; overflow: hidden; position: relative;">
+                            <div style="position: absolute; top: 15px; left: 15px; background: var(--accent); color: white; padding: 6px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; z-index: 10;"><i class="fas fa-video"></i> Profil Wilayah</div>
+                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qtT3APyW-VA?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe>
                         </div>
                         <div>
-                            <h4 style="color: white; font-size: 1.25rem; margin-bottom: 8px;">Potensi Wisata Alam & Wilayah</h4>
-                            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6;">
-                                Polanharjo memiliki kekayaan alam yang melimpah, terutama potensi wisata air atau <b>"Umbul"</b> yang berasal dari mata air alami sebening kaca.
-                            </p>
+                            <h4 style="color: white; font-size: 1.25rem; margin-top: 15px;">Potensi Wisata Alam & Wilayah</h4>
+                            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.6;">Polanharjo memiliki kekayaan alam yang melimpah, terutama potensi wisata air atau <b>"Umbul"</b> yang berasal dari mata air alami sebening kaca.</p>
                         </div>
                     </div>
                 </div>
@@ -245,27 +182,22 @@
             </div>
         </section>
 
-        <footer style="background:#020617; padding:40px 20px; text-align:center; color:#475569; font-size:0.9rem; display: flex; flex-direction: column; align-items: center; gap: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
-            <div class="footer-links" style="display: flex; gap: 25px; align-items: center;">
-                <a href="https://ptrp.undip.ac.id/" target="_blank" title="Website PTRP Sekolah Vokasi UNDIP"><i class="fas fa-graduation-cap"></i></a>
-                <a href="https://www.instagram.com/studio.poland/" target="_blank" title="Instagram Kelompok Studio Poland"><i class="fab fa-instagram"></i></a>
+        <footer style="background:#020617; padding:40px 20px; text-align:center; color:#475569; display: flex; flex-direction: column; align-items: center; gap: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+            <div class="footer-links" style="display: flex; gap: 25px;">
+                <a href="https://ptrp.undip.ac.id/" target="_blank"><i class="fas fa-graduation-cap"></i></a>
+                <a href="https://www.instagram.com/studio.poland/" target="_blank"><i class="fab fa-instagram"></i></a>
             </div>
-            <div style="margin-top: 5px;">
-                &copy; 2026 Studio Poland | Program DIV PTRP Sekolah Vokasi UNDIP
-            </div>
+            <div>&copy; 2026 Studio Poland | Program DIV PTRP Sekolah Vokasi UNDIP</div>
         </footer>
     </div>
 
     <div id="halaman-peta" class="page-view">
         <div id="map-container">
             <nav class="gis-nav">
-                <div class="brand">
-                    <i class="fas fa-map" style="color:var(--accent)"></i> WEBGIS POLANHARJO
-                </div>
-                
+                <div class="brand"><i class="fas fa-map" style="color:var(--accent)"></i> WEBGIS POLANHARJO</div>
                 <div class="nav-controls">
-                    <button onclick="tutupPeta()" class="nav-btn-back"><i class="fas fa-arrow-left"></i> <span>KEMBALI KE BERANDA</span></button>
-                    <button class="nav-btn-panel" onclick="toggleSidebar()"><i class="fas fa-layer-group"></i> <span>PANEL DATA</span></button>
+                    <button onclick="tutupPeta()" class="nav-btn-back"><i class="fas fa-arrow-left"></i> <span>KEMBALI</span></button>
+                    <button class="nav-btn-panel" onclick="toggleSidebar()"><i class="fas fa-layer-group"></i> <span>PANEL</span></button>
                 </div>
             </nav>
 
@@ -278,20 +210,23 @@
                 <input type="file" id="fileUpload" accept=".geojson,.json,.zip" style="display:none;" onchange="handleFileUpload(event)">
 
                 <div class="sidebar-section-title">Administrasi</div>
+                
                 <div class="layer-item" id="item-kecamatan">
                     <div class="layer-header" onclick="toggleGeoJsonLayer('kecamatan', 'batas_kecamatan_LN.geojson')">
                         <span style="flex:1;">Batas Kecamatan</span>
+                        <i class="fas fa-cloud-arrow-down dl-btn" title="Download Shapefile" onclick="event.stopPropagation(); downloadData('batas_administrasi.zip')"></i>
                         <div class="status-dot"></div>
                     </div>
-                    <div class="layer-controls"><label>Opacity</label><input type="range" class="opacity-slider" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('kecamatan', this.value)"></div>
+                    <div class="layer-controls"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('kecamatan', this.value)"></div>
                 </div>
                 
                 <div class="layer-item" id="item-desa">
                     <div class="layer-header" onclick="toggleGeoJsonLayer('desa', 'batas_desa_LN.geojson')">
                         <span style="flex:1;">Batas Desa</span>
+                        <i class="fas fa-cloud-arrow-down dl-btn" title="Download Shapefile" onclick="event.stopPropagation(); downloadData('batas_administrasi.zip')"></i>
                         <div class="status-dot"></div>
                     </div>
-                    <div class="layer-controls"><label>Opacity</label><input type="range" class="opacity-slider" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('desa', this.value)"></div>
+                    <div class="layer-controls"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('desa', this.value)"></div>
                 </div>
 
                 <div class="layer-item" id="item-camat">
@@ -301,20 +236,23 @@
                 </div>
 
                 <div class="sidebar-section-title">Peta Tematik (GeoJSON)</div>
+                
                 <div class="layer-item" id="item-persil">
                     <div class="layer-header" onclick="toggleGeoJsonLayer('persil', 'persil_polan.geojson')">
                         <span style="flex:1;">Persil Tanah / ZNT</span>
+                        <i class="fas fa-cloud-arrow-down dl-btn" title="Download Shapefile" onclick="event.stopPropagation(); downloadData('persil_polan.zip')"></i>
                         <div class="status-dot"></div>
                     </div>
-                    <div class="layer-controls"><label>Opacity</label><input type="range" class="opacity-slider" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('persil', this.value)"></div>
+                    <div class="layer-controls"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('persil', this.value)"></div>
                 </div>
 
                 <div class="layer-item" id="item-pl">
                     <div class="layer-header" onclick="toggleGeoJsonLayer('pl', 'pl_polan.geojson')">
                         <span style="flex:1;">Penggunaan Lahan</span>
+                        <i class="fas fa-cloud-arrow-down dl-btn" title="Download Shapefile" onclick="event.stopPropagation(); downloadData('pl_polan.zip')"></i>
                         <div class="status-dot"></div>
                     </div>
-                    <div class="layer-controls"><label>Opacity</label><input type="range" class="opacity-slider" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('pl', this.value)"></div>
+                    <div class="layer-controls"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('pl', this.value)"></div>
                 </div>
 
                 <div class="layer-item" id="item-wisata">
@@ -335,7 +273,7 @@
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
 
     <script>
-        // --- LOGIC LOGIN & HALAMAN ---
+        // --- LOGIN & NAVIGATION ---
         document.addEventListener("DOMContentLoaded", () => {
             if (sessionStorage.getItem("isLoggedIn") === "true") {
                 document.getElementById('login-overlay').style.display = "none";
@@ -368,14 +306,16 @@
             window.scrollTo(0,0);
         }
 
-        // --- KONFIGURASI PETA LEAFLET ---
-        var map = L.map('map', { center: [-7.6105, 110.6600], zoom: 14, zoomControl: false });
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+        // --- INIT MAP ---
+        const centerPos = [-7.6105, 110.6600];
+        var map = L.map('map', { center: centerPos, zoom: 14, zoomControl: false });
         var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png');
-        
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
-        // --- FITUR DIGITASI GEOMAN ---
+        // --- GEOMAN (DIGITASI) ---
         map.pm.addControls({ position: 'topright', cutPolygon: true, removalMode: true });
         map.pm.setLang('id');
         map.pm.Toolbar.createCustomControl({
@@ -387,46 +327,41 @@
                 var a = document.createElement('a');
                 a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fc));
                 a.download = "hasil_digitasi.geojson";
-                a.click();
+                document.body.appendChild(a); a.click(); a.remove();
             }
         });
 
+        // --- MAP LAYERS ---
         const layers = {};
         layers.camat = L.marker([-7.610573, 110.660003], { icon: L.divIcon({ className:'', html:'<div class="custom-pin" style="background:#ef4444"><i class="fas fa-building"></i></div>', iconSize:[32,32], iconAnchor:[16,32]}) }).bindPopup("Kantor Kecamatan Polanharjo");
         layers.wisata = L.marker([-7.6075, 110.6620], { icon: L.divIcon({ className:'', html:'<div class="custom-pin" style="background:#10b981"><i class="fas fa-umbrella-beach"></i></div>', iconSize:[32,32], iconAnchor:[16,32]}) }).bindPopup("Wisata Air Umbul Ponggok");
 
-        const geojsonStyles = {
-            kecamatan: { color: "#ef4444", weight: 3, fillOpacity: 0.1, dashArray: "10, 5" },
-            desa: { color: "#3b82f6", weight: 2, fillOpacity: 0.1, dashArray: "5, 5" }
-        };
-
-        function getWarnaPL(jenis) {
-            var j = String(jenis || "").toLowerCase();
-            if (j.includes("sawah") || j.includes("tani")) return "#10b981"; 
-            if (j.includes("permukiman") || j.includes("rumah")) return "#f87171"; 
-            if (j.includes("tegalan") || j.includes("kebun")) return "#a3e635"; 
-            if (j.includes("sungai") || j.includes("air")) return "#38bdf8"; 
-            if (j.includes("jalan") || j.includes("akses")) return "#64748b"; 
-            return "#fbbf24"; 
-        }
-
-        function getWarnaPersil(status) {
-            var s = String(status || "").toLowerCase();
-            if (s.includes("shm") || s.includes("hak milik")) return "#fbbf24"; 
-            if (s.includes("hgb") || s.includes("guna bangunan")) return "#f97316"; 
-            if (s.includes("kas desa") || s.includes("desa")) return "#22c55e"; 
-            if (s.includes("negara")) return "#94a3b8"; 
-            if (s.includes("pakai")) return "#a855f7"; 
-            return "#e2e8f0"; 
+        function getWarna(key, val) {
+            let v = String(val || "").toLowerCase();
+            if(key === 'pl') {
+                if(v.includes('sawah') || v.includes('tani')) return '#10b981';
+                if(v.includes('permukiman') || v.includes('rumah')) return '#f87171';
+                if(v.includes('tegalan') || v.includes('kebun')) return '#a3e635';
+                if(v.includes('sungai') || v.includes('air')) return '#38bdf8';
+                if(v.includes('jalan')) return '#64748b';
+                return '#fbbf24';
+            }
+            if(key === 'persil') {
+                if(v.includes('shm') || v.includes('hak milik')) return '#fbbf24';
+                if(v.includes('hgb') || v.includes('guna')) return '#f97316';
+                if(v.includes('kas desa') || v.includes('desa')) return '#22c55e';
+                if(v.includes('negara')) return '#94a3b8';
+                if(v.includes('pakai')) return '#a855f7';
+                return '#e2e8f0';
+            }
+            return "#3b82f6";
         }
 
         function buildPopupHTML(props) {
             let content = `<h4 style="color:var(--accent); margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:5px;">Informasi Atribut</h4><table class="attr-table">`;
-            for (let key in props) { if (props[key]) content += `<tr><th>${key}</th><td>${props[key]}</td></tr>`; }
+            for (let k in props) { if (props[k]) content += `<tr><th>${k}</th><td>${props[k]}</td></tr>`; }
             return content + `</table>`;
         }
-
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 
         function toggleGeoJsonLayer(key, filename) {
             const itemNode = document.getElementById('item-' + key);
@@ -441,10 +376,10 @@
                     .then(data => {
                         layers[key] = L.geoJSON(data, {
                             style: function(f) {
-                                let props = f.properties || {};
-                                if (key === 'pl') return { color: "#ffffff", weight: 0.8, fillColor: getWarnaPL(props.jenis || props.JENIS || props.Jenis), fillOpacity: 0.65 };
-                                if (key === 'persil') return { color: "#475569", weight: 0.5, fillColor: getWarnaPersil(props.status || props.STATUS || props.Status), fillOpacity: 0.6 };
-                                return geojsonStyles[key];
+                                let p = f.properties || {};
+                                if (key === 'pl') return { color: "#ffffff", weight: 0.8, fillColor: getWarna('pl', p.jenis || p.JENIS || p.Jenis), fillOpacity: 0.65 };
+                                if (key === 'persil') return { color: "#475569", weight: 0.5, fillColor: getWarna('persil', p.status || p.STATUS || p.Status), fillOpacity: 0.6 };
+                                return { color: (key==='kecamatan' ? "#ef4444" : "#3b82f6"), weight: (key==='kecamatan' ? 3 : 2), fillOpacity: 0.1, dashArray: (key==='kecamatan' ? "10, 5" : "5, 5") };
                             },
                             onEachFeature: (f, l) => { if (f.properties) l.bindPopup(buildPopupHTML(f.properties)); }
                         }).addTo(map);
@@ -467,58 +402,51 @@
             }
         }
 
-        // --- SISTEM UPLOAD DATA (.GEOJSON & .ZIP SHP) ---
+        function downloadData(filename) {
+            const link = document.createElement('a');
+            link.href = 'data/' + filename; 
+            link.download = filename;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+
+        // --- UPLOAD DATA LOKAL ---
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-
-            const fileName = file.name;
-            const ext = fileName.split('.').pop().toLowerCase();
-            const layerId = 'user_' + Date.now();
+            const ext = file.name.split('.').pop().toLowerCase();
+            const id = 'user_' + Date.now();
             const reader = new FileReader();
 
             if (ext === 'geojson' || ext === 'json') {
-                reader.onload = function(e) {
-                    try {
-                        const geojson = JSON.parse(e.target.result);
-                        addUserLayer(geojson, fileName, layerId);
-                    } catch(err) { alert("Gagal membaca GeoJSON: Data tidak valid."); }
+                reader.onload = (e) => {
+                    try { addUserLayer(JSON.parse(e.target.result), file.name, id); } 
+                    catch(err) { alert("Data GeoJSON tidak valid."); }
                 };
                 reader.readAsText(file);
             } else if (ext === 'zip') {
-                reader.onload = function(e) {
-                    shp(e.target.result).then(function(geojson){
-                        addUserLayer(geojson, fileName, layerId);
-                    }).catch(function(err){
-                        alert("Gagal membaca Shapefile. Pastikan dalam format .zip yang berisi file .shp, .shx, dan .dbf.");
-                    });
+                reader.onload = (e) => {
+                    shp(e.target.result).then(geojson => addUserLayer(geojson, file.name, id))
+                    .catch(() => alert("Gagal! Pastikan file .zip berisi file Shapefile (.shp, .shx, .dbf)."));
                 };
                 reader.readAsArrayBuffer(file);
-            } else {
-                alert("Format ditolak! Hanya mendukung .geojson atau .zip (berisi Shapefile).");
-            }
-            event.target.value = ''; // reset
+            } else { alert("Format ditolak! Gunakan .geojson atau .zip"); }
+            event.target.value = ''; 
         }
 
         function addUserLayer(geojson, name, id) {
-            // Gaya visual khusus untuk layer upload
-            const newLayer = L.geoJSON(geojson, {
+            const nl = L.geoJSON(geojson, {
                 style: { color: '#ec4899', weight: 2, fillColor: '#f472b6', fillOpacity: 0.5 },
-                onEachFeature: function(f, l) { if (f.properties) l.bindPopup(buildPopupHTML(f.properties)); }
+                onEachFeature: (f, l) => { if (f.properties) l.bindPopup(buildPopupHTML(f.properties)); }
             }).addTo(map);
+            layers[id] = nl;
 
-            layers[id] = newLayer;
-
-            // Bikin menu di sidebar
-            let container = document.getElementById('user-layers-container');
-            if(container.innerHTML === "") {
-                container.innerHTML = '<div class="sidebar-section-title" style="margin-top: 25px;">Data Unggahan Lokal</div>';
-            }
-
-            const html = `
+            let c = document.getElementById('user-layers-container');
+            if(c.innerHTML === "") c.innerHTML = '<div class="sidebar-section-title" style="margin-top: 25px;">Data Unggahan</div>';
+            
+            c.insertAdjacentHTML('beforeend', `
                 <div class="layer-item active" id="item-${id}">
                     <div class="layer-header" onclick="toggleMarkerLayer('${id}')">
-                        <span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size: 0.75rem;" title="${name}">${name}</span>
+                        <span style="flex:1; overflow:hidden; text-overflow:ellipsis; font-size:0.75rem;">${name}</span>
                         <div class="status-dot"></div>
                     </div>
                     <div class="layer-controls">
@@ -526,18 +454,15 @@
                         <input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('${id}', this.value)">
                     </div>
                 </div>
-            `;
-            container.insertAdjacentHTML('beforeend', html);
-            
-            // Zoom otomatis ke area data yang baru di-upload
-            map.fitBounds(newLayer.getBounds());
+            `);
+            map.fitBounds(nl.getBounds());
         }
 
-        // --- SISTEM LEGENDA ---
+        // --- LEGENDA ---
         var legend = L.control({position: 'bottomright'});
-        legend.onAdd = function (map) { 
+        legend.onAdd = function() { 
             var div = L.DomUtil.create('div', 'legend-box'); div.id = 'legend'; 
-            div.innerHTML = '<div class="legend-title">Legenda Peta</div><div id="legend-content">Memuat...</div>'; 
+            div.innerHTML = '<div class="legend-title">Legenda Peta</div><div id="legend-content"></div>'; 
             return div; 
         };
         legend.addTo(map);
@@ -548,37 +473,34 @@
             let html = ""; let active = false;
 
             if (layers['kecamatan'] && map.hasLayer(layers['kecamatan'])) {
-                active = true;
-                html += `<div class="legend-section"><div class="legend-section-title">Administrasi Kecamatan</div><div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #ef4444;"></div> Batas Kecamatan</div></div>`;
+                active = true; html += `<div class="legend-section"><div class="legend-section-title">Admin Kecamatan</div><div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #ef4444;"></div> Batas Kecamatan</div></div>`;
             }
             if (layers['desa'] && map.hasLayer(layers['desa'])) {
-                active = true;
-                html += `<div class="legend-section"><div class="legend-section-title">Administrasi Desa</div><div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #3b82f6;"></div> Batas Desa</div></div>`;
+                active = true; html += `<div class="legend-section"><div class="legend-section-title">Admin Desa</div><div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #3b82f6;"></div> Batas Desa</div></div>`;
             }
             if (layers['pl'] && map.hasLayer(layers['pl'])) {
-                active = true;
-                html += `<div class="legend-section"><div class="legend-section-title">Penggunaan Lahan</div>
-                            <div class="legend-item"><div class="legend-color" style="background:#10b981"></div> Sawah</div>
-                            <div class="legend-item"><div class="legend-color" style="background:#f87171"></div> Permukiman</div>
-                            <div class="legend-item"><div class="legend-color" style="background:#a3e635"></div> Tegalan</div>
-                            <div class="legend-item"><div class="legend-color" style="background:#38bdf8"></div> Sungai/Air</div>
-                         </div>`;
+                active = true; html += `<div class="legend-section"><div class="legend-section-title">Penggunaan Lahan</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#10b981"></div> Sawah</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#f87171"></div> Permukiman</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#a3e635"></div> Tegalan/Kebun</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#38bdf8"></div> Air/Sungai</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#64748b"></div> Jalan</div>
+                 </div>`;
             }
             if (layers['persil'] && map.hasLayer(layers['persil'])) {
-                active = true;
-                html += `<div class="legend-section"><div class="legend-section-title">Persil Tanah</div>
-                            <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div> SHM</div>
-                            <div class="legend-item"><div class="legend-color" style="background:#f97316"></div> HGB</div>
-                            <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div> Tanah Desa</div>
-                            <div class="legend-item"><div class="legend-color" style="background:#a855f7"></div> Hak Pakai</div>
-                         </div>`;
+                active = true; html += `<div class="legend-section"><div class="legend-section-title">Persil Tanah</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#fbbf24"></div> SHM</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#f97316"></div> HGB</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#22c55e"></div> Tanah Desa</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#a855f7"></div> Hak Pakai</div>
+                 </div>`;
             }
-            if (!active) { html = '<p style="color:#94a3b8; font-style:italic; margin-top:5px;">Pilih layer di panel kiri.</p>'; }
+            if (!active) html = '<p style="color:#94a3b8; font-style:italic;">Pilih layer di panel kiri.</p>';
             content.innerHTML = html;
         }
         updateLegend();
 
-        // Control Panel Kanan Bawah
+        // Control View Map
         var customControls = L.control({position: 'bottomright'});
         customControls.onAdd = function (map) {
             var c = L.DomUtil.create('div', 'custom-controls-container');
