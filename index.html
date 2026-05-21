@@ -24,6 +24,8 @@
         /* --- LOGIN & HERO --- */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-image: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1920&auto=format&fit=crop'); background-size: cover; background-position: center; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.6s ease; }
         .login-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: 50px 40px; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .login-brand { font-size: 1.5rem; font-weight: 800; margin-bottom: 30px; color: white; letter-spacing: 1px; }
+        .login-brand i { color: var(--accent); font-size: 2rem; margin-bottom: 10px; display: block; }
         .input-group { margin-bottom: 20px; text-align: left; }
         .input-group label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px; font-weight: 600; }
         .input-group input { width: 100%; padding: 14px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; outline: none; }
@@ -38,15 +40,26 @@
         /* --- PROFIL & LAYOUT --- */
         .profil-section { padding: 100px 20px; background-color: var(--bg-dark); }
         .profil-container { max-width: 1200px; margin: 0 auto; }
+        .profil-header { text-align: center; margin-bottom: 60px; }
+        .profil-header h2 { font-size: 2.5rem; color: white; margin-bottom: 15px; }
+        .profil-header h2 span { color: var(--accent); }
+        .profil-header p { color: #94a3b8; max-width: 800px; margin: 0 auto; line-height: 1.8; font-size: 1.05rem; }
         .profil-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 25px; margin-bottom: 40px; }
         .profil-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; }
         .profil-card h3 { color: white; margin-bottom: 15px; }
         .profil-card i { font-size: 2.5rem; color: var(--accent); margin-bottom: 20px; display: block; }
         .profil-card p { color: #cbd5e1; line-height: 1.7; font-size: 0.95rem; }
+        .profil-card ul { list-style: none; margin-top: 15px; }
+        .profil-card ul li { color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 10px; }
+        .profil-card ul li::before { content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--primary); font-size: 0.9rem; margin-top: 2px; }
         
         .admin-wisata-wrapper { background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 20px; padding: 40px; display: flex; gap: 40px; flex-wrap: wrap; }
         .admin-info { flex: 1; min-width: 300px; }
         .lokasi-box { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 4px solid var(--primary); }
+        .lokasi-box:hover { transform: translateX(5px); background: rgba(255,255,255,0.08); border-color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .lokasi-box h4 { color: white; margin-bottom: 8px; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .lokasi-box p { color: #cbd5e1; font-size: 0.85rem; margin: 0; line-height: 1.5; }
+
         .wisata-box { flex: 1.2; min-width: 300px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
         
         footer a { color: #cbd5e1; font-size: 1.5rem; text-decoration: none; transition: var(--transition); }
@@ -55,7 +68,7 @@
         /* --- WEBGIS SECTION STYLES --- */
         #map-container { height: 100vh; width: 100vw; position: relative; }
         
-        /* NAVBAR BARU: TATA LETAK LEBIH RAPI & PROPORSIONAL */
+        /* NAVBAR TATA LETAK BARU */
         .gis-nav { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 96%; background: var(--glass); backdrop-filter: blur(20px); padding: 15px 30px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-between; align-items: center; z-index: 2000; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .brand { font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 12px; font-size: 1.1rem; }
         .nav-controls { display: flex; gap: 15px; }
@@ -77,7 +90,7 @@
         .btn-upload { width: 100%; background: rgba(59, 130, 246, 0.15); border: 1px dashed var(--primary); color: white; padding: 14px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; transition: var(--transition); }
         .btn-upload:hover { background: var(--primary); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3); }
 
-        /* TOMBOL DOWNLOAD GRID (BARU) */
+        /* TOMBOL DOWNLOAD GRID */
         .dl-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
         .btn-dl-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--primary); padding: 10px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-dl-item:hover { background: var(--primary); color: white; transform: translateY(-2px); }
@@ -101,8 +114,8 @@
 
         #map { height: 100%; width: 100%; z-index: 1; }
         
-        /* Modifikasi Posisi Controls Leaflet biar gak nabrak Navbar */
-        .leaflet-top { top: 90px !important; } /* Mendorong Geoman dkk ke bawah */
+        /* Leaflet Controls Tweak */
+        .leaflet-top { top: 90px !important; } 
         .leaflet-bottom.leaflet-right { display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 25px !important; margin-right: 25px !important; gap: 12px; }
         .leaflet-bar { border: none !important; margin: 0 !important; }
         .custom-control-btn { background: var(--glass) !important; backdrop-filter: blur(10px); color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; width: 44px !important; height: 44px !important; display: flex !important; align-items: center; justify-content: center; border-radius: 12px !important; cursor: pointer; font-size: 1.1rem; transition: var(--transition); text-decoration: none; margin-bottom: 5px; }
@@ -166,10 +179,46 @@
                 </div>
 
                 <div class="profil-grid">
-                    <div class="profil-card"><i class="fas fa-mountain-sun"></i><h3>Fisik & Alam</h3><p>Terletak pada bentang alam Dataran Aluvial (62,7%) dan Dataran Fluvial Gunungapi (37,3%).</p></div>
-                    <div class="profil-card"><i class="fas fa-users-viewfinder"></i><h3>Demografi & Sosial</h3><p>Tingkat kuantitas penduduk yang dinamis dan didominasi oleh kalangan usia produktif.</p></div>
-                    <div class="profil-card"><i class="fas fa-map-location-dot"></i><h3>Ekonomi & Lahan</h3><p>Wilayah ini adalah "Lumbung Pangan" sekaligus destinasi ekowisata unggulan.</p></div>
-                    <div class="profil-card"><i class="fas fa-tower-broadcast"></i><h3>Infrastruktur & Kebencanaan</h3><p>Diproyeksikan berkembang pesat seiring dengan akses <b>Jalan Tol Solo-Jogja</b>.</p></div>
+                    <div class="profil-card">
+                        <i class="fas fa-mountain-sun"></i>
+                        <h3>Fisik & Alam</h3>
+                        <p>Terletak pada bentang alam Dataran Aluvial (62,7%) dan Dataran Fluvial Gunungapi (37,3%) dengan morfologi yang didominasi oleh lereng landai, membuat wilayah ini aman dari longsor dan ideal untuk permukiman.</p>
+                        <ul>
+                            <li>Didominasi oleh tanah <b>Kambisol Distrik</b> yang sangat subur.</li>
+                            <li>Berada di atas <b>CAT Karanganyar - Boyolali</b>.</li>
+                            <li>Secara hidrologis, menyuplai air bagi DAS Bengawan Solo.</li>
+                        </ul>
+                    </div>
+                    <div class="profil-card">
+                        <i class="fas fa-users-viewfinder"></i>
+                        <h3>Demografi & Sosial</h3>
+                        <p>Tingkat kuantitas penduduk yang dinamis dan didominasi oleh kalangan usia produktif. Kepadatan penduduk tertinggi terdapat di desa yang menjadi pusat wisata.</p>
+                        <ul>
+                            <li>Jumlah penduduk lebih dari <b>41.000 jiwa</b>.</li>
+                            <li>Mayoritas menempati ruang transisi pekarangan desa.</li>
+                            <li>Memiliki potensi sosial-budaya Candi Keprabon.</li>
+                        </ul>
+                    </div>
+                    <div class="profil-card">
+                        <i class="fas fa-map-location-dot"></i>
+                        <h3>Ekonomi & Lahan</h3>
+                        <p>Wilayah ini adalah "Lumbung Pangan" sekaligus destinasi ekowisata unggulan. Sekitar <b>71,67% (1.803 Ha)</b> tata guna lahan berupa persawahan irigasi.</p>
+                        <ul>
+                            <li>Komoditas pertanian: <b>Beras Rojolele Srinuk</b>.</li>
+                            <li>Objek wisata mata air (Umbul Ponggok, Janti).</li>
+                            <li>Terdapat industri besar dan UMKM lokal.</li>
+                        </ul>
+                    </div>
+                    <div class="profil-card">
+                        <i class="fas fa-tower-broadcast"></i>
+                        <h3>Infrastruktur & Kebencanaan</h3>
+                        <p>Diproyeksikan berkembang pesat seiring dengan akses <b>Jalan Tol Solo-Jogja</b>. Wilayah ini secara geologis memiliki risiko gempa sangat rendah.</p>
+                        <ul>
+                            <li>Jaringan irigasi dan jalan kabupaten memadai.</li>
+                            <li>Kerentanan tinggi terhadap Ancaman Hama (OPT).</li>
+                            <li>Berpotensi dilanda puting beliung di lahan terbuka.</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div class="admin-wisata-wrapper">
@@ -337,7 +386,7 @@
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png');
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
-        // --- GEOMAN (DIGITASI) DI PINDAH KE KIRI ATAS TAPI TURUN DIKIT ---
+        // --- GEOMAN (DIGITASI) DI KIRI ATAS ---
         map.pm.addControls({ position: 'topleft', cutPolygon: true, removalMode: true });
         map.pm.setLang('id');
         map.pm.Toolbar.createCustomControl({
@@ -424,7 +473,7 @@
             }
         }
 
-        // Fungsi Download yang dipanggil oleh tombol di sidebar
+        // Fungsi Download
         function downloadData(filename) {
             const link = document.createElement('a');
             link.href = 'data/' + filename; 
@@ -496,10 +545,10 @@
             let html = ""; let active = false;
 
             if (layers['kecamatan'] && map.hasLayer(layers['kecamatan'])) {
-                active = true; html += `<div class="legend-section"><div class="legend-section-title">Administrasi Kecamatan</div><div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #ef4444;"></div> Batas Kecamatan</div></div>`;
+                active = true; html += `<div class="legend-section"><div class="legend-section-title">Admin Kecamatan</div><div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #ef4444;"></div> Batas Kecamatan</div></div>`;
             }
             if (layers['desa'] && map.hasLayer(layers['desa'])) {
-                active = true; html += `<div class="legend-section"><div class="legend-section-title">Administrasi Desa</div><div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #3b82f6;"></div> Batas Desa</div></div>`;
+                active = true; html += `<div class="legend-section"><div class="legend-section-title">Admin Desa</div><div class="legend-item"><div class="legend-line" style="border-top: 2px dashed #3b82f6;"></div> Batas Desa</div></div>`;
             }
             if (layers['pl'] && map.hasLayer(layers['pl'])) {
                 active = true; html += `<div class="legend-section"><div class="legend-section-title">Penggunaan Lahan</div>
@@ -519,7 +568,7 @@
                     <div class="legend-item"><div class="legend-color" style="background:#a855f7"></div> Lahan Hak Pakai</div>
                  </div>`;
             }
-            if (!active) html = '<p style="color:#94a3b8; font-style:italic; margin-top:5px;">Pilih layer spasial di panel kiri untuk memuat keterangan warna legenda.</p>';
+            if (!active) html = '<p style="color:#94a3b8; font-style:italic;">Pilih layer di panel kiri.</p>';
             content.innerHTML = html;
         }
         updateLegend();
