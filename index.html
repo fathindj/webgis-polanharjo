@@ -111,7 +111,7 @@
         .layer-item.active .layer-controls { display: flex; }
         input[type=range] { width: 100%; }
 
-        /* ALAT QUERY UI */
+        /* ALAT QUERY UI LENGKAP */
         .query-box { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px; }
         .query-input { width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; margin-bottom: 10px; font-size: 0.8rem; }
         .query-btn { width: 100%; padding: 10px; border-radius: 8px; background: var(--accent); color: white; border: none; cursor: pointer; font-weight: bold; margin-bottom: 5px; transition: var(--transition); }
@@ -382,16 +382,26 @@
                 
                 <div class="sidebar-section-title"><i class="fas fa-magnifying-glass-location"></i> Query & Analisis Persil</div>
                 <div class="query-box">
-                    <label style="font-size: 0.75rem; color: #cbd5e1; display:block; margin-bottom:5px;">Cari Lokasi Potensial:</label>
+                    <label style="font-size: 0.75rem; color: #cbd5e1; display:block; margin-bottom:8px;">Filter & Pencarian Lanjutan:</label>
+                    <input type="text" id="filter-pemilik" class="query-input" placeholder="Cari Nama Pemilik/Pengguna">
                     <select id="filter-hak" class="query-input">
                         <option value="">-- Semua Status Hak --</option>
                         <option value="shm">Sertifikat Hak Milik (SHM)</option>
                         <option value="hgb">Hak Guna Bangunan (HGB)</option>
                         <option value="desa">Tanah Desa / Kas Desa</option>
+                        <option value="pakai">Hak Pakai</option>
                     </select>
-                    <input type="number" id="filter-luas" class="query-input" placeholder="Min. Luas Bidang (Ha)">
-                    <button onclick="terapkanFilter()" class="query-btn"><i class="fas fa-filter"></i> Terapkan Analisis</button>
-                    <button onclick="resetFilter()" class="reset-btn">Reset Filter</button>
+                    <select id="filter-guna" class="query-input">
+                        <option value="">-- Semua Guna Lahan --</option>
+                        <option value="sawah">Sawah / Pertanian</option>
+                        <option value="permukiman">Permukiman / Rumah</option>
+                        <option value="tegalan">Tegalan / Kebun</option>
+                        <option value="kosong">Tanah Kosong</option>
+                    </select>
+                    <input type="number" id="filter-luas" class="query-input" placeholder="Min. Luas Bidang (Ha)" step="any">
+                    
+                    <button onclick="terapkanFilter()" class="query-btn"><i class="fas fa-search-location"></i> Eksekusi Pencarian</button>
+                    <button onclick="resetFilter()" class="reset-btn">Hapus Filter</button>
                 </div>
 
                 <div class="sidebar-section-title" id="title-unduh"><i class="fas fa-cloud-arrow-down"></i> Unduh Data</div>
@@ -670,7 +680,7 @@
             }
         }
 
-        // --- FITUR QUERY & FILTER PERSIL TANAH ---
+        // --- FITUR QUERY & FILTER PERSIL TANAH (LENGKAP DENGAN AUTO ZOOM) ---
         function terapkanFilter() {
             if(!layers['persil']) {
                 alert("Silakan aktifkan layer 'Persil Tanah' di panel Tematik terlebih dahulu!");
@@ -680,32 +690,53 @@
                 toggleGeoJsonLayer('persil', 'persil_polan.geojson');
             }
 
+            let pemilikFilter = document.getElementById('filter-pemilik').value.toLowerCase();
             let hakFilter = document.getElementById('filter-hak').value.toLowerCase();
+            let gunaFilter = document.getElementById('filter-guna').value.toLowerCase();
             let luasFilter = parseFloat(document.getElementById('filter-luas').value) || 0;
+            
             let matchCount = 0;
+            let bounds = L.latLngBounds(); // Wadah untuk menyimpan batas koordinat hasil pencarian
 
             layers['persil'].eachLayer(function(layer) {
                 let p = layer.feature.properties;
+                
+                // Ekstrak String dengan aman
+                let namaPemilik = String(p.pemilik || p.PEMILIK || p.Nama || "").toLowerCase();
                 let statusHak = String(p.status || p.STATUS || p.Status || "").toLowerCase();
+                let gunaLahan = String(p.jenis || p.JENIS || p.penggunaan || p.Penggunaan || "").toLowerCase();
+                
+                // Tangani penulisan angka Luas (koma diubah jadi titik)
                 let luasBidangStr = String(p.luas || p.LUAS || p.Luas || p.Shape_Area || "0").replace(/,/g, '.');
                 let luasBidang = parseFloat(luasBidangStr) || 0;
 
+                // Logika Pencocokan
+                let cocokPemilik = (pemilikFilter === "") ? true : namaPemilik.includes(pemilikFilter);
                 let cocokHak = (hakFilter === "") ? true : statusHak.includes(hakFilter);
+                let cocokGuna = (gunaFilter === "") ? true : gunaLahan.includes(gunaFilter);
                 let cocokLuas = luasBidang >= luasFilter;
 
-                if (cocokHak && cocokLuas) {
+                if (cocokPemilik && cocokHak && cocokGuna && cocokLuas) {
                     layer.setStyle({ opacity: 1, fillOpacity: 0.8, color: '#f59e0b', weight: 2 });
                     matchCount++;
+                    bounds.extend(layer.getBounds()); // Tambahkan koordinat bidang ke dalam wadah
                 } else {
                     layer.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 }); // Sembunyikan yang tidak cocok
                 }
             });
 
-            alert(`Analisis Selesai! Ditemukan ${matchCount} bidang tanah yang sesuai dengan kriteria Anda.`);
+            if(matchCount > 0) {
+                map.fitBounds(bounds); // Animasi Peta Terbang (Zoom) ke Bidang Hasil Filter
+                alert(`Analisis Selesai! Ditemukan ${matchCount} bidang tanah yang sesuai dengan kriteria.`);
+            } else {
+                alert(`Tidak ditemukan bidang tanah dengan kriteria tersebut. Coba kurangi parameter filter.`);
+            }
         }
 
         function resetFilter() {
+            document.getElementById('filter-pemilik').value = "";
             document.getElementById('filter-hak').value = "";
+            document.getElementById('filter-guna').value = "";
             document.getElementById('filter-luas').value = "";
             if(layers['persil']) {
                 layers['persil'].eachLayer(function(layer) {
