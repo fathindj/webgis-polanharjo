@@ -74,14 +74,55 @@
         .btn-excel { display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 20px; transition: var(--transition); width: fit-content; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);}
         .btn-excel:hover { background: #059669; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5); }
 
-        /* --- PROFIL KELOMPOK D3 PTRP --- */
-        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; }
-        .team-card { background: var(--bg-card); border-radius: 20px; overflow: hidden; text-align: center; border: 1px solid rgba(255,255,255,0.05); transition: var(--transition); padding-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .team-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
-        .team-img { width: 100%; height: 250px; object-fit: cover; border-bottom: 3px solid var(--accent); background: #334155; }
-        .team-info { padding: 20px 15px 0 15px; }
-        .team-name { font-size: 1.1rem; color: white; font-weight: 800; margin-bottom: 5px; }
-        .team-nim { color: var(--accent); font-size: 0.85rem; font-family: monospace; letter-spacing: 1px; }
+        /* --- PROFIL KELOMPOK D3 PTRP (DIPERBARUI FLEXBOX) --- */
+        .team-grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 30px; 
+            max-width: 1150px; 
+            margin: 0 auto; 
+        }
+        .team-card { 
+            flex: 0 1 240px; 
+            background: var(--bg-card); 
+            border-radius: 15px; 
+            overflow: hidden; 
+            text-align: center; 
+            border: 1px solid rgba(255,255,255,0.05); 
+            transition: var(--transition); 
+            padding-bottom: 20px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+        }
+        .team-card:hover { 
+            transform: translateY(-10px); 
+            border-color: var(--accent); 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5); 
+        }
+        .team-img { 
+            width: 100%; 
+            height: 280px; 
+            object-fit: cover; 
+            object-position: top; 
+            border-bottom: 4px solid var(--accent); 
+            background: #f8fafc; 
+        }
+        .team-info { 
+            padding: 18px 10px 0 10px; 
+        }
+        .team-name { 
+            font-size: 1.05rem; 
+            color: white; 
+            font-weight: 800; 
+            margin-bottom: 5px; 
+            line-height: 1.3; 
+        }
+        .team-nim { 
+            color: var(--accent); 
+            font-size: 0.85rem; 
+            font-family: monospace; 
+            letter-spacing: 1px; 
+        }
 
         @media (max-width: 768px) { .data-wrapper.reverse { flex-direction: column; } }
 
@@ -285,49 +326,49 @@
 
             <div class="team-grid">
                 <div class="team-card">
-                    <img src="img/fathin.png" alt="Fathin" class="team-img" onerror="this.src='https://via.placeholder.com/300x300/1e293b/f59e0b?text=Fathin'">
+                    <img src="img/fathin.png" alt="Fathin" class="team-img" onerror="this.src='https://via.placeholder.com/300x400/1e293b/f59e0b?text=Fathin'">
                     <div class="team-info">
                         <div class="team-name">Mohammad Fathin Dj. A.</div>
                         <div class="team-nim">40030623620026</div>
                     </div>
                 </div>
                 <div class="team-card">
-                    <img src="img/aaron.png" alt="Aaron" class="team-img" onerror="this.src='https://via.placeholder.com/300x300/1e293b/f59e0b?text=Aaron'">
+                    <img src="img/aaron.png" alt="Aaron" class="team-img" onerror="this.src='https://via.placeholder.com/300x400/1e293b/f59e0b?text=Aaron'">
                     <div class="team-info">
                         <div class="team-name">Aaron Nosel Rifki R.</div>
                         <div class="team-nim">40030623630062</div>
                     </div>
                 </div>
                 <div class="team-card">
-                    <img src="img/nabila.png" alt="Nabila" class="team-img" onerror="this.src='https://via.placeholder.com/300x300/1e293b/f59e0b?text=Nabila'">
+                    <img src="img/nabila.png" alt="Nabila" class="team-img" onerror="this.src='https://via.placeholder.com/300x400/1e293b/f59e0b?text=Nabila'">
                     <div class="team-info">
                         <div class="team-name">Nabila Cahyani</div>
                         <div class="team-nim">40030623650086</div>
                     </div>
                 </div>
                 <div class="team-card">
-                    <img src="img/indah.png" alt="Indah" class="team-img" onerror="this.src='https://via.placeholder.com/300x300/1e293b/f59e0b?text=Indah'">
+                    <img src="img/indah.png" alt="Indah" class="team-img" onerror="this.src='https://via.placeholder.com/300x400/1e293b/f59e0b?text=Indah'">
                     <div class="team-info">
                         <div class="team-name">Indah Ghani Amalia</div>
                         <div class="team-nim">40030623630067</div>
                     </div>
                 </div>
                 <div class="team-card">
-                    <img src="img/athania.png" alt="Athania" class="team-img" onerror="this.src='https://via.placeholder.com/300x300/1e293b/f59e0b?text=Athania'">
+                    <img src="img/athania.png" alt="Athania" class="team-img" onerror="this.src='https://via.placeholder.com/300x400/1e293b/f59e0b?text=Athania'">
                     <div class="team-info">
                         <div class="team-name">Athania Ramadani</div>
                         <div class="team-nim">40030623630045</div>
                     </div>
                 </div>
                 <div class="team-card">
-                    <img src="img/aulia.png" alt="Aulia" class="team-img" onerror="this.src='https://via.placeholder.com/300x300/1e293b/f59e0b?text=Aulia'">
+                    <img src="img/aulia.png" alt="Aulia" class="team-img" onerror="this.src='https://via.placeholder.com/300x400/1e293b/f59e0b?text=Aulia'">
                     <div class="team-info">
                         <div class="team-name">Aulia Fathni Mufiid</div>
                         <div class="team-nim">40030623650050</div>
                     </div>
                 </div>
                 <div class="team-card">
-                    <img src="img/talitha.png" alt="Talitha" class="team-img" onerror="this.src='https://via.placeholder.com/300x300/1e293b/f59e0b?text=Talitha'">
+                    <img src="img/talitha.png" alt="Talitha" class="team-img" onerror="this.src='https://via.placeholder.com/300x400/1e293b/f59e0b?text=Talitha'">
                     <div class="team-info">
                         <div class="team-name">Talitha Aliya Naira</div>
                         <div class="team-nim">40030623630066</div>
@@ -341,7 +382,7 @@
                 <a href="https://ptrp.undip.ac.id/" target="_blank" style="color:#cbd5e1;"><i class="fas fa-graduation-cap"></i></a>
                 <a href="https://www.instagram.com/studio.poland/" target="_blank" style="color:#cbd5e1;"><i class="fab fa-instagram"></i></a>
             </div>
-            <div>&copy; 2026 Tim Studio Poland | Perencanaan Tata Ruang dan Pertanahan Sekolah Vokasi Universitas Diponegoro</div>
+            <div>&copy; 2026 Tim Studio Poland | Program DIV PTRP Sekolah Vokasi UNDIP</div>
         </footer>
     </div>
 
