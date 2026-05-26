@@ -21,9 +21,9 @@
         .page-view.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- SISTEM LOGIN & DAFTAR (DIOPTIMASI ANTI LAG) --- */
-        #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.4s ease; }
-        .auth-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        /* --- SISTEM LOGIN (DIOPTIMASI ANTI LAG, TANPA GAMBAR EXTERNAL) --- */
+        #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.3s ease; }
+        .auth-card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .auth-form { display: none; }
         .auth-form.active { display: block; animation: fadeIn 0.3s ease; }
         .input-group { margin-bottom: 15px; text-align: left; }
@@ -37,7 +37,7 @@
         .auth-switch { color: var(--accent); font-size: 0.85rem; margin-top: 20px; cursor: pointer; font-weight: 600; }
 
         /* --- HERO SECTION --- */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(rgba(15, 23, 42, 0.7), var(--bg-dark)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1920'); background-size: cover; background-position: center; padding: 0 20px; }
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%); padding: 0 20px; }
         .hero h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 800; margin-bottom: 15px; background: linear-gradient(to right, #ffffff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .hero p { font-size: 1.1rem; color: #cbd5e1; max-width: 600px; margin-bottom: 30px; line-height: 1.6; }
         .explore-btn { padding: 16px 38px; background: var(--accent); color: white; text-decoration: none; border-radius: 50px; font-weight: 800; display: inline-flex; align-items: center; gap: 10px; border: none; cursor: pointer; font-size: 1rem; transition: var(--transition); }
@@ -272,7 +272,7 @@
                 <h3 style="color:white; margin-bottom: 10px; font-size: 1.8rem;"><i class="fas fa-video" style="color:var(--accent);"></i> Video Profil Wilayah</h3>
                 <p style="color:#94a3b8; margin-bottom:30px;">Kondisi eksisting lapangan dan pemanfaatan potensi wisata air "Umbul" sebagai roda ekonomi pedesaan.</p>
                 <div style="max-width: 850px; margin: 0 auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); aspect-ratio: 16/9;">
-                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qtT3APyW-VA?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe>
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qtT3APyW-VA?mute=1" frameborder="0" allowfullscreen></iframe>
                 </div>
             </div>
         </section>
@@ -401,7 +401,7 @@
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
 
     <script>
-        let userRole = sessionStorage.getItem("userRole") || "guest"; // Default selalu tamu kalo belum di set
+        let userRole = sessionStorage.getItem("userRole") || "guest"; 
 
         // --- 1. SISTEM SIMULASI DATABASE LOGIN/DAFTAR ---
         document.addEventListener("DOMContentLoaded", () => {
@@ -409,7 +409,7 @@
                 document.getElementById('auth-overlay').style.display = "none";
                 document.body.classList.remove("locked");
                 initChart(); 
-                terapkanAturanHakAkses(); // Terapkan aturan Admin/Guest
+                terapkanAturanHakAkses(); 
             }
         });
 
@@ -419,7 +419,6 @@
             document.getElementById('form-' + type).classList.add('active');
         }
 
-        // Simpan Akun ke LocalStorage (Simulasi Database)
         function prosesRegister(e) {
             e.preventDefault();
             const email = document.getElementById('reg-email').value;
@@ -429,7 +428,6 @@
             switchAuth('login');
         }
 
-        // Proses Login Admin ngecek LocalStorage
         function prosesLogin(e) {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
@@ -443,13 +441,11 @@
             }
         }
 
-        // Proses Login Sebagai Tamu (Guest)
         function prosesGuest() {
             loginSukses("guest");
             alert("Anda masuk sebagai Tamu. Akses fitur Unduh, Tambah Data, dan Digitasi dinonaktifkan.");
         }
 
-        // Animasi transisi kalau login berhasil
         function loginSukses(role) {
             sessionStorage.setItem("isLoggedIn", "true");
             sessionStorage.setItem("userRole", role);
@@ -459,30 +455,21 @@
             setTimeout(() => {
                 document.getElementById('auth-overlay').style.display = "none";
                 document.body.classList.remove("locked");
-                initChart(); // Panggil render grafik excel
+                initChart(); 
                 terapkanAturanHakAkses();
-            }, 400); // Waktu animasi dipercepat
+            }, 300); // Waktu dipercepat biar ga buffering
         }
 
         // --- ATURAN BATASAN UNTUK MODE TAMU ---
         function terapkanAturanHakAkses() {
             if (userRole === "guest") {
-                // 1. Sembunyikan Tombol Tambah Data
                 document.querySelector('.btn-upload').style.display = 'none';
-                
-                // 2. Sembunyikan Pusat Unduh Data
                 document.getElementById('title-unduh').style.display = 'none';
                 document.getElementById('btn-group-unduh').style.display = 'none';
-
-                // 3. Matikan/Sembunyikan Toolbar Digitasi Geoman
-                if (map.pm) {
-                    map.pm.removeControls();
-                }
+                if (map.pm) map.pm.removeControls();
             } else {
-                // Admin: Tampilkan Toolbar Digitasi Geoman
                 map.pm.addControls({ position: 'topleft', cutPolygon: true, removalMode: true });
                 map.pm.setLang('id');
-                // Tambah tombol download digitasi khusus admin
                 map.pm.Toolbar.createCustomControl({
                     name: 'DownloadGeoJSON', block: 'custom', title: 'Download Hasil Digitasi', className: 'leaflet-pm-icon fas fa-download',
                     onClick: () => {
@@ -498,57 +485,39 @@
             }
         }
 
-        // --- 2. RENDER CHART.JS (SIMULASI DATA EXCEL) ---
+        // --- 2. RENDER CHART.JS ---
         let chartsRendered = false;
         function initChart() {
-            if(chartsRendered) return; // Biar gak render dobel pas pindah halaman
-            
+            if(chartsRendered) return; 
             Chart.defaults.color = '#cbd5e1';
             Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
 
-            // Chart Guna Lahan (Doughnut)
             new Chart(document.getElementById('plChart').getContext('2d'), {
                 type: 'doughnut',
                 data: {
                     labels: ['Sawah Irigasi', 'Permukiman', 'Tegalan/Kebun', 'Perairan/Sungai'],
-                    datasets: [{
-                        data: [1803.5, 520.2, 115.4, 76.9],
-                        backgroundColor: ['#10b981', '#f87171', '#a3e635', '#38bdf8'],
-                        borderColor: '#1e293b', borderWidth: 3
-                    }]
+                    datasets: [{ data: [1803.5, 520.2, 115.4, 76.9], backgroundColor: ['#10b981', '#f87171', '#a3e635', '#38bdf8'], borderColor: '#1e293b', borderWidth: 3 }]
                 },
                 options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
             });
 
-            // Chart Demografi (Bar)
             new Chart(document.getElementById('demoChart').getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: ['0-14 Tahun', '15-64 Tahun', '> 65 Tahun'],
-                    datasets: [{
-                        label: 'Jumlah Penduduk (Jiwa)',
-                        data: [8500, 26000, 6820],
-                        backgroundColor: '#f59e0b',
-                        borderRadius: 5
-                    }]
+                    datasets: [{ label: 'Jumlah Penduduk', data: [8500, 26000, 6820], backgroundColor: '#f59e0b', borderRadius: 5 }]
                 },
                 options: { responsive: true, plugins: { legend: { display: false } } }
             });
 
-            // Chart Fisik Alam (Pie)
             new Chart(document.getElementById('fisikChart').getContext('2d'), {
                 type: 'pie',
                 data: {
-                    labels: ['Lereng 0-8% (Datar)', 'Lereng 8-15% (Landai)'],
-                    datasets: [{
-                        data: [85, 15],
-                        backgroundColor: ['#3b82f6', '#8b5cf6'],
-                        borderColor: '#1e293b', borderWidth: 3
-                    }]
+                    labels: ['Lereng 0-8%', 'Lereng 8-15%'],
+                    datasets: [{ data: [85, 15], backgroundColor: ['#3b82f6', '#8b5cf6'], borderColor: '#1e293b', borderWidth: 3 }]
                 },
                 options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
             });
-
             chartsRendered = true;
         }
 
@@ -576,7 +545,7 @@
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png');
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
-        // --- 5. LAYER LOGIC & STYLING ---
+        // --- 5. LAYER LOGIC ---
         const layers = {};
         layers.camat = L.marker([-7.610573, 110.660003], { icon: L.divIcon({ className:'', html:'<div class="custom-pin" style="background:#ef4444"><i class="fas fa-building"></i></div>', iconSize:[32,32], iconAnchor:[16,32]}) }).bindPopup("Kantor Kecamatan Polanharjo");
         layers.wisata = L.marker([-7.6075, 110.6620], { icon: L.divIcon({ className:'', html:'<div class="custom-pin" style="background:#10b981"><i class="fas fa-umbrella-beach"></i></div>', iconSize:[32,32], iconAnchor:[16,32]}) }).bindPopup("Wisata Air Umbul Ponggok");
