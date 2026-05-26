@@ -126,6 +126,10 @@
         .custom-pin { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.6); font-size: 16px; transition: transform 0.2s; }
         .custom-pin:hover { transform: scale(1.1); }
         
+        /* GPS LIVE TRACKING STYLES */
+        .gps-pulse { background: #3b82f6; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 rgba(59, 130, 246, 0.4); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
+
         .legend-box { background: var(--glass); border-radius: 15px; padding: 18px; border: 1px solid rgba(255,255,255,0.1); width: 250px; display: block; color: white; font-size: 0.8rem; max-height: 400px; overflow-y: auto; }
         .legend-title { font-size: 0.8rem; color: var(--accent); margin-bottom: 12px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .legend-color { width: 14px; height: 14px; border-radius: 3px; display: inline-block; margin-right: 8px; }
@@ -558,10 +562,17 @@
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 
-        // --- 4. MAPS CORE ---
+        // --- 4. MAPS CORE & BASEMAPS ---
         var map = L.map('map', { center: [-7.6105, 110.6600], zoom: 14, zoomControl: false });
+        
+        // Pilihan Basemap
         var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+        var googleMaps = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains:['mt0','mt1','mt2','mt3']
+        });
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png');
+        
         L.control.scale({position: 'bottomleft', metric: true, imperial: false}).addTo(map);
 
         // Fitur Tampil Koordinat WGS 84
@@ -582,7 +593,7 @@
                 if(v.includes('permukiman') || v.includes('rumah')) return '#f87171';
                 if(v.includes('tegalan') || v.includes('kebun')) return '#a3e635';
                 if(v.includes('sungai') || v.includes('air')) return '#38bdf8';
-                if(v.includes('penyangga') || v.includes('buffer')) return '#fbbf24'; // Revisi Warna Kawasan Penyangga
+                if(v.includes('penyangga') || v.includes('buffer')) return '#fbbf24'; 
                 if(v.includes('jalan')) return '#64748b';
                 return '#94a3b8';
             }
@@ -659,7 +670,7 @@
             }
         }
 
-        // --- FITUR BARU: QUERY & FILTER PERSIL TANAH ---
+        // --- FITUR QUERY & FILTER PERSIL TANAH ---
         function terapkanFilter() {
             if(!layers['persil']) {
                 alert("Silakan aktifkan layer 'Persil Tanah' di panel Tematik terlebih dahulu!");
@@ -813,16 +824,73 @@
         }
         updateLegend();
 
-        // Map View Controls
+        // --- 8. MAP VIEW CONTROLS & GPS TRACKING ---
+        let userMarker = null;
+        let userRadius = null;
+
+        // GPS Location Events
+        map.on('locationfound', function(e) {
+            let gpsIconNode = document.getElementById('icon-gps');
+            if(gpsIconNode) gpsIconNode.className = 'fas fa-location-crosshairs'; // Matikan ikon loading
+
+            let radius = e.accuracy / 2;
+            if(userMarker) { map.removeLayer(userMarker); map.removeLayer(userRadius); }
+            
+            // Animasi Titik Biru Khas Google Maps
+            userMarker = L.marker(e.latlng, { 
+                icon: L.divIcon({ className: 'gps-pulse', iconSize:[18,18], iconAnchor:[9,9] }) 
+            }).addTo(map).bindPopup("Lokasi Anda saat ini (Akurasi: " + Math.round(radius) + " meter)").openPopup();
+            
+            userRadius = L.circle(e.latlng, radius, {color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1, weight: 1}).addTo(map);
+        });
+
+        map.on('locationerror', function(e) {
+            let gpsIconNode = document.getElementById('icon-gps');
+            if(gpsIconNode) gpsIconNode.className = 'fas fa-location-crosshairs';
+            alert("Akses lokasi ditolak atau sinyal GPS tidak ditemukan. Pastikan izin lokasi pada browser aktif.");
+        });
+
         var customControls = L.control({position: 'bottomright'});
         customControls.onAdd = function (map) {
             var c = L.DomUtil.create('div', 'custom-controls-container');
-            var btnBase = L.DomUtil.create('a', 'custom-control-btn', c); btnBase.innerHTML = '<i class="fas fa-layer-group"></i>';
-            L.DomEvent.on(btnBase, 'click', function(e) { L.DomEvent.preventDefault(e); if (map.hasLayer(satellite)) { map.removeLayer(satellite); osm.addTo(map); btnBase.innerHTML = '<i class="fas fa-globe"></i>'; } else { map.removeLayer(osm); satellite.addTo(map); btnBase.innerHTML = '<i class="fas fa-layer-group"></i>'; } });
+            
+            // Tombol Switch Basemap (Sekarang rotasi antara 3 basemap)
+            var btnBase = L.DomUtil.create('a', 'custom-control-btn', c); 
+            btnBase.innerHTML = '<i class="fas fa-layer-group"></i>';
+            btnBase.title = "Ganti Peta Dasar (Basemap)";
+            var basemaps = [satellite, googleMaps, osm];
+            var currentMapIndex = 0;
+            
+            L.DomEvent.on(btnBase, 'click', function(e) { 
+                L.DomEvent.preventDefault(e); 
+                map.removeLayer(basemaps[currentMapIndex]);
+                currentMapIndex = (currentMapIndex + 1) % basemaps.length;
+                basemaps[currentMapIndex].addTo(map);
+                
+                // Ubah Ikon Tergantung Basemap
+                if(currentMapIndex === 0) btnBase.innerHTML = '<i class="fas fa-layer-group"></i>'; // Satelit
+                else if(currentMapIndex === 1) btnBase.innerHTML = '<i class="fab fa-google"></i>'; // Google Maps
+                else btnBase.innerHTML = '<i class="fas fa-map"></i>'; // OSM
+            });
+            
             L.DomUtil.create('div', '', c).style.height = '10px';
+            
             var btnIn = L.DomUtil.create('a', 'custom-control-btn', c); btnIn.innerHTML = '<i class="fas fa-plus"></i>'; L.DomEvent.on(btnIn, 'click', function(e) { L.DomEvent.preventDefault(e); map.zoomIn(); });
-            var btnHome = L.DomUtil.create('a', 'custom-control-btn', c); btnHome.innerHTML = '<i class="fas fa-crosshairs"></i>'; L.DomEvent.on(btnHome, 'click', function(e) { L.DomEvent.preventDefault(e); map.setView([-7.6105, 110.6600], 14); });
+            var btnHome = L.DomUtil.create('a', 'custom-control-btn', c); btnHome.innerHTML = '<i class="fas fa-house"></i>'; btnHome.title = "Lokasi Awal Polanharjo"; L.DomEvent.on(btnHome, 'click', function(e) { L.DomEvent.preventDefault(e); map.setView([-7.6105, 110.6600], 14); });
             var btnOut = L.DomUtil.create('a', 'custom-control-btn', c); btnOut.innerHTML = '<i class="fas fa-minus"></i>'; L.DomEvent.on(btnOut, 'click', function(e) { L.DomEvent.preventDefault(e); map.zoomOut(); });
+            
+            L.DomUtil.create('div', '', c).style.height = '10px';
+
+            // Tombol Fitur GPS Lacak Lokasi
+            var btnGPS = L.DomUtil.create('a', 'custom-control-btn', c); 
+            btnGPS.innerHTML = '<i id="icon-gps" class="fas fa-location-crosshairs"></i>'; 
+            btnGPS.title = "Lacak Lokasi Saya (GPS)";
+            L.DomEvent.on(btnGPS, 'click', function(e) { 
+                L.DomEvent.preventDefault(e); 
+                document.getElementById('icon-gps').className = 'fas fa-spinner fa-spin'; // Tampilkan loading
+                map.locate({setView: true, maxZoom: 17, enableHighAccuracy: true}); // Mulai cari lokasi
+            });
+
             return c;
         };
         customControls.addTo(map);
