@@ -393,7 +393,7 @@
                 <div class="brand"><i class="fas fa-map" style="color:var(--accent);"></i> GEOPOLAN</div>
                 <div class="nav-controls">
                     <button class="nav-btn-panel btn-toggle-sidebar" onclick="toggleSidebar()"><i class="fas fa-layer-group"></i> <span>PANEL DATA</span></button>
-                    <!-- Tombol Aktifkan/Matikan Digitasi -->
+                    <!-- Tombol Aktifkan/Matikan Digitasi Geoman -->
                     <button class="nav-btn-panel" id="btn-toggle-digit" onclick="toggleDigitasiTools()" style="color:var(--accent); border-color:var(--accent); display:none;"><i class="fas fa-pen-ruler"></i> <span>MODE DIGITASI</span></button>
                     <button onclick="tutupPeta()" class="nav-btn-back"><i class="fas fa-arrow-left"></i> <span>KEMBALI</span></button>
                 </div>
@@ -540,13 +540,16 @@
         let userRole = sessionStorage.getItem("userRole") || null; 
         document.addEventListener("DOMContentLoaded", () => {
             initVisitorCount(); 
+            // Langsung buka layar (Akses Publik Default)
             document.body.classList.remove("locked");
             initChart(); 
             
+            // Cek apakah admin sudah login sebelumnya
             if (sessionStorage.getItem("isLoggedIn") === "true") {
                 updateLoginButtonUI();
                 terapkanAturanHakAkses(); 
             } else {
+                // Set default jadi guest
                 sessionStorage.setItem("userRole", "guest");
                 userRole = "guest";
                 terapkanAturanHakAkses();
@@ -626,7 +629,7 @@
                 terapkanAturanHakAkses();
                 
                 // Trigger play youtube jika login (membutuhkan interaksi user)
-                if(ytPlayer && ytPlayer.playVideo) {
+                if(ytPlayer && typeof ytPlayer.playVideo === 'function') {
                     ytPlayer.playVideo();
                 }
 
@@ -755,7 +758,7 @@
             chartsRendered = true;
         }
 
-        // --- 3. NAVIGASI HALAMAN ---
+        // --- 3. NAVIGASI HALAMAN (PAUSE/PLAY YOUTUBE) ---
         function bukaPeta() {
             document.getElementById('halaman-beranda').classList.remove('active');
             document.getElementById('halaman-peta').classList.add('active');
@@ -763,6 +766,11 @@
             document.body.style.overflow = "hidden";
             setTimeout(() => { map.invalidateSize(); }, 100);
             window.scrollTo(0,0);
+            
+            // Auto pause youtube saat buka peta
+            if(ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+                ytPlayer.pauseVideo();
+            }
         }
 
         function tutupPeta() {
@@ -771,6 +779,11 @@
             document.getElementById('top-nav').style.display = 'block';
             document.body.style.overflow = "auto";
             window.scrollTo(0,0);
+            
+            // Auto play youtube saat balik ke beranda
+            if(ytPlayer && typeof ytPlayer.playVideo === 'function') {
+                ytPlayer.playVideo();
+            }
         }
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
