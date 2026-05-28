@@ -11,6 +11,8 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
+    <!-- YOUTUBE API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
 
     <style>
         :root { --bg-dark: #0f172a; --bg-card: #1e293b; --glass: rgba(15, 23, 42, 0.95); --accent: #f59e0b; --primary: #3b82f6; --text: #f8fafc; --transition: all 0.3s ease; }
@@ -59,7 +61,7 @@
         .btn-top-login { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 12px 25px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
         .btn-top-login:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(245, 158, 11, 0.4); }
 
-        /* --- HERO SECTION --- */
+        /* --- HERO SECTION DENGAN BACKGROUND SAWAH TERASERING --- */
         .hero { 
             height: 100vh; 
             display: flex; 
@@ -67,7 +69,11 @@
             justify-content: center; 
             align-items: center; 
             text-align: center; 
-            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1588880331179-bc9b93a8cb78?q=80&w=2070&auto=format&fit=crop') no-repeat center center/cover; 
+            background-color: #0f172a;
+            background-image: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1555400038-63f5ba517a47?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             padding: 0 20px; 
             position: relative; 
         }
@@ -158,7 +164,7 @@
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; margin-top: -5px; box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 5px; cursor: pointer; background: rgba(255,255,255,0.2); border-radius: 3px; }
 
-        /* --- UI FILTER & QUERY (Disederhanakan Dropdown) --- */
+        /* --- UI FILTER & QUERY --- */
         .query-box { background: rgba(0,0,0,0.25); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
         .query-input { width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: white; font-size: 0.9rem; margin-bottom:10px; outline: none; cursor: pointer;}
         .query-input option { background: var(--bg-card); color: white; }
@@ -177,7 +183,7 @@
         /* --- KOTAK KOORDINAT --- */
         .coord-display { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-card); padding: 10px 25px; border-radius: 50px; border: 2px solid var(--primary); color: #cbd5e1; font-size: 0.95rem; font-weight: bold; z-index: 1000; pointer-events: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;}
 
-        /* --- LEGENDA (KANAN BAWAH) --- */
+        /* --- LEGENDA (MURNI LEAFLET KANAN BAWAH) --- */
         .legend-box { background: var(--glass); border-radius: 15px; padding: 18px; border: 1px solid rgba(255,255,255,0.1); width: 250px; color: white; font-size: 0.9rem; max-height: 400px; overflow-y: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 10px; margin-right: 10px; pointer-events: auto; }
         .legend-title { font-size: 0.95rem; color: var(--accent); margin-bottom: 12px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .legend-color { width: 14px; height: 14px; border-radius: 3px; display: inline-block; margin-right: 8px; border: 1px solid rgba(255,255,255,0.2); }
@@ -338,12 +344,13 @@
                 </div>
             </div>
 
-            <!-- VIDEO YOUTUBE -->
+            <!-- VIDEO YOUTUBE DENGAN AUTOPLAY SETELAH LOGIN -->
             <div style="background:var(--bg-card); padding:40px; border-radius:20px; text-align:center; border: 1px solid rgba(255,255,255,0.05); margin-top: 40px;">
                 <h3 style="color:white; margin-bottom: 10px; font-size: 1.8rem;"><i class="fas fa-video" style="color:var(--accent);"></i> Video Profil Wilayah</h3>
                 <p style="color:#94a3b8; margin-bottom:30px;">Kondisi eksisting lapangan dan pemanfaatan potensi wisata air "Umbul" sebagai roda ekonomi pedesaan.</p>
-                <div style="max-width: 850px; margin: 0 auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); aspect-ratio: 16/9;">
-                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qtT3APyW-VA?mute=1" frameborder="0" allowfullscreen></iframe>
+                <div style="max-width: 850px; margin: 0 auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); aspect-ratio: 16/9; position: relative;">
+                    <!-- Wrapper YouTube API -->
+                    <div id="yt-player" style="position: absolute; top:0; left:0; width:100%; height:100%;"></div>
                 </div>
             </div>
         </section>
@@ -386,7 +393,7 @@
                 <div class="brand"><i class="fas fa-map" style="color:var(--accent);"></i> GEOPOLAN</div>
                 <div class="nav-controls">
                     <button class="nav-btn-panel btn-toggle-sidebar" onclick="toggleSidebar()"><i class="fas fa-layer-group"></i> <span>PANEL DATA</span></button>
-                    <!-- Tombol Aktifkan/Matikan Digitasi Geoman -->
+                    <!-- Tombol Aktifkan/Matikan Digitasi -->
                     <button class="nav-btn-panel" id="btn-toggle-digit" onclick="toggleDigitasiTools()" style="color:var(--accent); border-color:var(--accent); display:none;"><i class="fas fa-pen-ruler"></i> <span>MODE DIGITASI</span></button>
                     <button onclick="tutupPeta()" class="nav-btn-back"><i class="fas fa-arrow-left"></i> <span>KEMBALI</span></button>
                 </div>
@@ -446,7 +453,7 @@
 
                 <div class="sidebar-section-title"><i class="fas fa-layer-group"></i> Tematik</div>
                 
-                <!-- LAYER BARU LP2B -->
+                <!-- LAYER KP2B -->
                 <div class="layer-item" id="item-kp2b">
                     <div class="layer-header" onclick="toggleGeoJsonLayer('kp2b', 'KP2B.geojson')"><span style="flex:1;">Lahan Pertanian Pangan (KP2B)</span><div class="status-dot"></div></div>
                     <div class="layer-controls"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('kp2b', this.value)"></div>
@@ -510,20 +517,36 @@
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 4000);
         }
 
+        // --- INIT YOUTUBE API ---
+        var ytPlayer;
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('yt-player', {
+                videoId: 'qtT3APyW-VA',
+                playerVars: { 
+                    'playsinline': 1, 
+                    'rel': 0,
+                    'controls': 1
+                },
+                events: {
+                    'onReady': function(event) {
+                        // Mengatur volume 50% saat API YouTube sudah siap
+                        event.target.setVolume(50);
+                    }
+                }
+            });
+        }
+
         // --- INIT AWAL ---
         let userRole = sessionStorage.getItem("userRole") || null; 
         document.addEventListener("DOMContentLoaded", () => {
             initVisitorCount(); 
-            // Langsung buka layar (Akses Publik Default)
             document.body.classList.remove("locked");
             initChart(); 
             
-            // Cek apakah admin sudah login sebelumnya
             if (sessionStorage.getItem("isLoggedIn") === "true") {
                 updateLoginButtonUI();
                 terapkanAturanHakAkses(); 
             } else {
-                // Set default jadi guest
                 sessionStorage.setItem("userRole", "guest");
                 userRole = "guest";
                 terapkanAturanHakAkses();
@@ -602,6 +625,11 @@
                 updateLoginButtonUI();
                 terapkanAturanHakAkses();
                 
+                // Trigger play youtube jika login (membutuhkan interaksi user)
+                if(ytPlayer && ytPlayer.playVideo) {
+                    ytPlayer.playVideo();
+                }
+
                 if(role === 'admin') showToast("Selamat Datang Admin! Mode Edit & Unduh diaktifkan.");
                 else showToast("Berhasil masuk ke mode Pengunjung Biasa.");
             }, 300);
@@ -761,7 +789,6 @@
         // --- 5. LAYER LOGIC (DATA BAWAAN) ---
         const layers = {};
         
-        // POP-UP UNTUK KANTOR CAMAT & KANTOR DESA
         let popupCamat = `
             <div style="text-align:center; font-family:'Times New Roman', Times, serif;">
                 <h4 style="color:#f59e0b; margin-bottom:5px;">Kantor Kecamatan Polanharjo</h4>
@@ -875,7 +902,7 @@
             }
         }
 
-        // --- FITUR QUERY (TEKNIK BRUTE-FORCE ANTI GAGAL) ---
+        // --- FITUR QUERY BRUTE-FORCE (ANTI GAGAL) ---
         function terapkanFilter() {
             let hakFilter = document.getElementById('filter-hak').value.toLowerCase();
             let gunaFilter = document.getElementById('filter-guna').value.toLowerCase();
@@ -888,7 +915,6 @@
             let matchCount = 0;
             let bounds = L.latLngBounds();
 
-            // Skenario 1: Filter HAK (Cari di Layer Persil Tanah)
             if (hakFilter !== "") {
                 if(!layers['persil']) {
                     showToast("Memuat data Persil Tanah...");
@@ -911,7 +937,6 @@
                 layers['persil'].eachLayer(l => layers['persil'].resetStyle(l));
             }
 
-            // Skenario 2: Filter GUNA LAHAN (Cari di Layer Penggunaan Lahan / PL)
             if (gunaFilter !== "") {
                 if(!layers['pl']) {
                     showToast("Memuat data Penggunaan Lahan...");
@@ -925,7 +950,6 @@
                     
                     let isMatch = allValues.includes(gunaFilter);
                     
-                    // Adaptasi sinonim dataset
                     if (gunaFilter === "permukiman" && (allValues.includes("pekarangan") || allValues.includes("rumah"))) isMatch = true;
                     if (gunaFilter === "sawah" && (allValues.includes("tani") || allValues.includes("irigasi") || allValues.includes("pertanian"))) isMatch = true;
                     if (gunaFilter === "tegalan" && allValues.includes("kebun")) isMatch = true;
@@ -942,7 +966,10 @@
                 layers['pl'].eachLayer(l => layers['pl'].resetStyle(l));
             }
 
-            if(matchCount > 0) {
+            if(hakFilter === "" && gunaFilter === "") {
+                showToast("Menampilkan semua data persil.");
+                if(layers['persil'].getBounds) map.fitBounds(layers['persil'].getBounds());
+            } else if(matchCount > 0) {
                 map.fitBounds(bounds);
                 showToast(`Mantap! ${matchCount} bidang spasial ditemukan.`);
             } else {
