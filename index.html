@@ -59,10 +59,21 @@
         .btn-top-login { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 12px 25px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
         .btn-top-login:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(245, 158, 11, 0.4); }
 
-        /* --- HERO SECTION --- */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%); padding: 0 20px; position: relative; }
+        /* --- HERO SECTION (DITAMBAH BACKGROUND FOTO UDARA DESA) --- */
+        .hero { 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            /* Latar belakang foto sawah/desa dengan filter gelap agar teks tetap jelas */
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1588880331179-bc9b93a8cb78?q=80&w=2070&auto=format&fit=crop') no-repeat center center/cover; 
+            padding: 0 20px; 
+            position: relative; 
+        }
         .hero h1 { font-size: clamp(3.5rem, 8vw, 5.5rem); font-weight: bold; margin-bottom: 15px; background: linear-gradient(to right, #ffffff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; text-transform: uppercase; }
-        .hero p { font-size: 1.2rem; color: #cbd5e1; max-width: 650px; margin-bottom: 30px; line-height: 1.6; }
+        .hero p { font-size: 1.2rem; color: #e2e8f0; max-width: 650px; margin-bottom: 30px; line-height: 1.6; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .explore-btn { padding: 16px 38px; background: var(--accent); color: white; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-flex; align-items: center; gap: 10px; border: none; cursor: pointer; font-size: 1.1rem; transition: var(--transition); }
         .explore-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4); }
 
@@ -112,7 +123,7 @@
 
         /* Navigasi Atas WebGIS */
         .gis-nav { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 96%; background: var(--glass); padding: 15px 30px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-between; align-items: center; z-index: 2000; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .brand { font-weight: bold; letter-spacing: 2px; display: flex; align-items: center; gap: 12px; font-size: 1.2rem; }
+        .brand { font-weight: bold; letter-spacing: 2px; display: flex; align-items: center; gap: 12px; font-size: 1.2rem; text-transform: uppercase;}
         .nav-controls { display: flex; gap: 15px; }
         
         .nav-btn-panel { background: rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 10px; font-weight: bold; font-size: 0.95rem; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; color: white; }
@@ -148,9 +159,9 @@
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; margin-top: -5px; box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 5px; cursor: pointer; background: rgba(255,255,255,0.2); border-radius: 3px; }
 
-        /* Filter Query */
+        /* --- UI FILTER & QUERY (Disederhanakan jadi Dropdown doang) --- */
         .query-box { background: rgba(0,0,0,0.25); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
-        .query-input { width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: white; font-size: 0.9rem; margin-bottom:10px; outline: none;}
+        .query-input { width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: white; font-size: 0.9rem; margin-bottom:10px; outline: none; cursor: pointer;}
         .query-input option { background: var(--bg-card); color: white; }
         .query-action { display: flex; gap: 10px; margin-top: 5px; }
         .query-btn { flex: 2; padding: 10px; border-radius: 8px; background: var(--accent); color: white; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; display: flex; align-items:center; justify-content:center; gap:5px;}
@@ -210,11 +221,13 @@
     <div class="top-nav" id="top-nav">
         <button onclick="bukaLogin()" class="btn-top-login" id="btn-top-login">
             <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i> 
-            <span id="text-top-login">LOGIN SISTEM</span>
+            <span id="text-top-login">MASUK ADMIN</span>
         </button>
     </div>
 
+    <!-- AUTHENTICATION -->
     <div id="auth-overlay">
+        <!-- Form Login -->
         <div class="auth-card auth-form active" id="form-login">
             <button class="btn-close-auth" onclick="tutupLogin()"><i class="fas fa-times"></i></button>
             <div class="login-brand" style="margin-bottom:20px; font-weight:bold; font-size:1.2rem; color:var(--accent);"><i class="fas fa-shield-halved"></i> PORTAL MASUK</div>
@@ -233,6 +246,7 @@
             </form>
         </div>
 
+        <!-- Form Register -->
         <div class="auth-card auth-form" id="form-register">
             <button class="btn-close-auth" onclick="tutupLogin()"><i class="fas fa-times"></i></button>
             <div class="login-brand" style="margin-bottom:5px; font-weight:bold; font-size:1.2rem; color:var(--primary);"><i class="fas fa-user-plus"></i> BUAT AKUN ADMIN</div>
@@ -252,7 +266,9 @@
         </div>
     </div>
 
+    <!-- HALAMAN BERANDA -->
     <div id="halaman-beranda" class="page-view active">
+        <!-- Hero -->
         <section class="hero" id="home">
             <h1 style="margin-top: 50px;">GEOPOLAN</h1>
             <p>Portal Informasi Publik dan Data Spasial Interaktif untuk mendukung Rencana Detail Tata Ruang (RDTR) dan tata kelola pertanahan Desa Polan, Klaten.</p>
@@ -262,6 +278,7 @@
             </div>
         </section>
 
+        <!-- DATA SEKTORAL -->
         <section class="section-container" id="data-interaktif">
             <div class="section-title">
                 <h2>Analisis <span>Sektoral Wilayah</span></h2>
@@ -275,6 +292,7 @@
                 <div class="stat-card"><i class="fas fa-building-user"></i><h3>9</h3><p>Sarana Ekonomi</p></div>
             </div>
 
+            <!-- Demografi Bar Chart -->
             <div class="data-wrapper">
                 <div class="data-chart"><h4 style="text-align:center; margin-bottom:15px;">Struktur Usia Penduduk (2024)</h4><canvas id="demoChart" width="400" height="250"></canvas></div>
                 <div class="data-text">
@@ -290,6 +308,7 @@
                 </div>
             </div>
 
+            <!-- Pendidikan Pie Chart -->
             <div class="data-wrapper reverse">
                 <div class="data-chart"><h4 style="text-align:center; margin-bottom:15px;">Tingkat Pendidikan Terakhir</h4><canvas id="pendidikanChart" width="400" height="250"></canvas></div>
                 <div class="data-text">
@@ -304,6 +323,7 @@
                 </div>
             </div>
 
+            <!-- Pekerjaan Bar Chart -->
             <div class="data-wrapper">
                 <div class="data-chart"><h4 style="text-align:center; margin-bottom:15px;">Mata Pencaharian Penduduk</h4><canvas id="pekerjaanChart" width="400" height="250"></canvas></div>
                 <div class="data-text">
@@ -318,6 +338,7 @@
                 </div>
             </div>
 
+            <!-- VIDEO YOUTUBE -->
             <div style="background:var(--bg-card); padding:40px; border-radius:20px; text-align:center; border: 1px solid rgba(255,255,255,0.05); margin-top: 40px;">
                 <h3 style="color:white; margin-bottom: 10px; font-size: 1.8rem;"><i class="fas fa-video" style="color:var(--accent);"></i> Video Profil Wilayah</h3>
                 <p style="color:#94a3b8; margin-bottom:30px;">Kondisi eksisting lapangan dan pemanfaatan potensi wisata air "Umbul" sebagai roda ekonomi pedesaan.</p>
@@ -327,6 +348,7 @@
             </div>
         </section>
 
+        <!-- TIM PENYUSUN -->
         <section class="section-container" id="tim-penyusun" style="padding-top: 20px;">
             <div class="section-title">
                 <h2>Tim <span>Studio Poland</span></h2>
@@ -356,17 +378,21 @@
         </footer>
     </div>
 
+    <!-- HALAMAN MAP PETA INTERAKTIF -->
     <div id="halaman-peta" class="page-view">
         <div id="map-container">
+            <!-- Navbar Map -->
             <nav class="gis-nav">
                 <div class="brand"><i class="fas fa-map" style="color:var(--accent);"></i> GEOPOLAN</div>
                 <div class="nav-controls">
                     <button class="nav-btn-panel btn-toggle-sidebar" onclick="toggleSidebar()"><i class="fas fa-layer-group"></i> <span>PANEL DATA</span></button>
+                    <!-- Tombol Aktifkan/Matikan Digitasi -->
                     <button class="nav-btn-panel" id="btn-toggle-digit" onclick="toggleDigitasiTools()" style="color:var(--accent); border-color:var(--accent); display:none;"><i class="fas fa-pen-ruler"></i> <span>MODE DIGITASI</span></button>
                     <button onclick="tutupPeta()" class="nav-btn-back"><i class="fas fa-arrow-left"></i> <span>KEMBALI</span></button>
                 </div>
             </nav>
 
+            <!-- Panel Kiri (Sidebar) -->
             <aside class="sidebar active" id="sidebar">
                 <h3 style="color: var(--accent); margin-bottom: 15px; font-weight: 800;">DATA EXPLORER</h3>
                 
@@ -414,11 +440,13 @@
                     <div class="layer-controls"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('desa', this.value)"></div>
                 </div>
                 
+                <!-- MARKER KANTOR CAMAT & DESA -->
                 <div class="layer-item" id="item-camat"><div class="layer-header" onclick="toggleMarkerLayer('camat')"><span style="flex:1;">Kantor Camat Polanharjo</span><div class="status-dot"></div></div></div>
                 <div class="layer-item" id="item-kantordesa"><div class="layer-header" onclick="toggleMarkerLayer('kantordesa')"><span style="flex:1;">Kantor Desa Polan</span><div class="status-dot"></div></div></div>
 
                 <div class="sidebar-section-title"><i class="fas fa-layer-group"></i> Tematik</div>
                 
+                <!-- LAYER KP2B -->
                 <div class="layer-item" id="item-kp2b">
                     <div class="layer-header" onclick="toggleGeoJsonLayer('kp2b', 'KP2B.geojson')"><span style="flex:1;">Lahan Pertanian Pangan (KP2B)</span><div class="status-dot"></div></div>
                     <div class="layer-controls"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('kp2b', this.value)"></div>
@@ -437,10 +465,13 @@
                 <div id="user-layers-container"></div>
             </aside>
 
+            <!-- MAP CONTAINER -->
             <div id="map"></div>
             
+            <!-- KOORDINAT (TENGAH BAWAH) -->
             <div id="coord-display" class="coord-display"><i class="fas fa-location-dot" style="color:var(--accent);"></i> KOORDINAT: - <span>(WGS 84 / EPSG:4326)</span></div>
             
+            <!-- PANEL KANAN (BHUMI ATR/BPN STYLE DIGITASI) -->
             <div class="bhumi-tools hidden" id="bhumi-tools">
                 <button class="tool-btn" data-title="Gambar Poligon" onclick="aktfikanAlat('Polygon')"><i class="fas fa-draw-polygon"></i></button>
                 <button class="tool-btn" data-title="Gambar Garis" onclick="aktfikanAlat('Line')"><i class="fas fa-project-diagram"></i></button>
@@ -453,6 +484,7 @@
         </div>
     </div>
 
+    <!-- Scripts Leaflet & Geoman -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
@@ -460,8 +492,6 @@
     <script>
         // Deklarasi Peta Global
         var map = L.map('map', { center: [-7.6105, 110.6600], zoom: 14, zoomControl: false });
-
-        let userRole = sessionStorage.getItem("userRole") || null; 
 
         // --- SISTEM VISITOR COUNTER ---
         function initVisitorCount() {
@@ -481,6 +511,7 @@
         }
 
         // --- INIT AWAL ---
+        let userRole = sessionStorage.getItem("userRole") || null; 
         document.addEventListener("DOMContentLoaded", () => {
             initVisitorCount(); 
             // Langsung buka layar (Akses Publik Default)
@@ -499,76 +530,7 @@
             }
         });
 
-        // --- SISTEM CUSTOM TOOLBAR ALA BHUMI ATR/BPN ---
-        let isModeDigitasi = false;
-        
-        function toggleDigitasiTools() {
-            let tools = document.getElementById('bhumi-tools');
-            let btnToggle = document.getElementById('btn-toggle-digit');
-            
-            if(tools.classList.contains('hidden')) {
-                tools.classList.remove('hidden');
-                btnToggle.innerHTML = '<i class="fas fa-times"></i> <span>TUTUP DIGITASI</span>';
-                btnToggle.style.color = 'white';
-                btnToggle.style.background = '#ef4444';
-                btnToggle.style.borderColor = '#ef4444';
-                showToast("Mode Digitasi diaktifkan. Gunakan menu di kanan layar.");
-                
-                map.pm.addControls({ drawMarker: false, drawPolygon: false, drawPolyline: false, editMode: false, dragMode: false, cutPolygon: false, removalMode: false });
-                map.pm.setLang('id');
-                isModeDigitasi = true;
-            } else {
-                map.pm.disableDraw();
-                map.pm.disableGlobalEditMode();
-                map.pm.disableGlobalRemovalMode();
-                
-                tools.classList.add('hidden');
-                btnToggle.innerHTML = '<i class="fas fa-pen-ruler"></i> <span>MODE DIGITASI</span>';
-                btnToggle.style.background = 'rgba(255,255,255,0.05)';
-                btnToggle.style.color = 'var(--accent)';
-                btnToggle.style.borderColor = 'var(--accent)';
-                showToast("Mode Digitasi dinonaktifkan.");
-                isModeDigitasi = false;
-            }
-        }
-
-        function aktfikanAlat(jenis) {
-            map.pm.disableGlobalEditMode();
-            map.pm.disableGlobalRemovalMode();
-            map.pm.enableDraw(jenis, { snappable: true, snapDistance: 20 });
-            showToast("Mulai menggambar " + jenis + " di peta.");
-        }
-
-        function toggleEdit() {
-            map.pm.disableDraw();
-            map.pm.disableGlobalRemovalMode();
-            map.pm.toggleGlobalEditMode();
-            if(map.pm.globalEditModeEnabled()) showToast("Pilih node/titik bidang untuk mengedit.");
-            else showToast("Mode edit dimatikan.");
-        }
-
-        function toggleHapus() {
-            map.pm.disableDraw();
-            map.pm.disableGlobalEditMode();
-            map.pm.toggleGlobalRemovalMode();
-            if(map.pm.globalRemovalModeEnabled()) showToast("Klik bidang di peta untuk menghapusnya.");
-            else showToast("Mode hapus dimatikan.");
-        }
-
-        let digitCounter = 1;
-        map.on('pm:create', (e) => {
-            const layer = e.layer;
-            const id = 'digit_' + Date.now();
-            const name = 'Hasil Digitasi ' + digitCounter++;
-            
-            layer.setStyle({ color: '#ec4899', weight: 2, fillColor: '#f472b6', fillOpacity: 0.5 });
-            layers[id] = layer; layer.options.id = id;
-            
-            buatMenuDiSidebar(id, name, layer);
-            showToast(name + " ditambahkan ke Panel Kiri.");
-        });
-
-        // --- SISTEM LOGIN KHUSUS ADMIN ---
+        // --- LOGIN SISTEM ---
         function bukaLogin() {
             if(userRole === 'admin') {
                 if(confirm("Anda saat ini login sebagai Admin. Ingin keluar (Logout)?")) {
@@ -659,6 +621,75 @@
                 document.getElementById('btn-toggle-digit').style.display = 'flex'; 
             }
         }
+
+        // --- SISTEM CUSTOM TOOLBAR ALA BHUMI ATR/BPN ---
+        let isModeDigitasi = false;
+        
+        function toggleDigitasiTools() {
+            let tools = document.getElementById('bhumi-tools');
+            let btnToggle = document.getElementById('btn-toggle-digit');
+            
+            if(tools.classList.contains('hidden')) {
+                tools.classList.remove('hidden');
+                btnToggle.innerHTML = '<i class="fas fa-times"></i> <span>TUTUP DIGITASI</span>';
+                btnToggle.style.color = 'white';
+                btnToggle.style.background = '#ef4444';
+                btnToggle.style.borderColor = '#ef4444';
+                showToast("Mode Digitasi diaktifkan. Gunakan menu di kanan layar.");
+                
+                map.pm.addControls({ drawMarker: false, drawPolygon: false, drawPolyline: false, editMode: false, dragMode: false, cutPolygon: false, removalMode: false });
+                map.pm.setLang('id');
+                isModeDigitasi = true;
+            } else {
+                map.pm.disableDraw();
+                map.pm.disableGlobalEditMode();
+                map.pm.disableGlobalRemovalMode();
+                
+                tools.classList.add('hidden');
+                btnToggle.innerHTML = '<i class="fas fa-pen-ruler"></i> <span>MODE DIGITASI</span>';
+                btnToggle.style.background = 'rgba(255,255,255,0.05)';
+                btnToggle.style.color = 'var(--accent)';
+                btnToggle.style.borderColor = 'var(--accent)';
+                showToast("Mode Digitasi dinonaktifkan.");
+                isModeDigitasi = false;
+            }
+        }
+
+        function aktfikanAlat(jenis) {
+            map.pm.disableGlobalEditMode();
+            map.pm.disableGlobalRemovalMode();
+            map.pm.enableDraw(jenis, { snappable: true, snapDistance: 20 });
+            showToast("Mulai menggambar " + jenis + " di peta.");
+        }
+
+        function toggleEdit() {
+            map.pm.disableDraw();
+            map.pm.disableGlobalRemovalMode();
+            map.pm.toggleGlobalEditMode();
+            if(map.pm.globalEditModeEnabled()) showToast("Pilih node/titik bidang untuk mengedit.");
+            else showToast("Mode edit dimatikan.");
+        }
+
+        function toggleHapus() {
+            map.pm.disableDraw();
+            map.pm.disableGlobalEditMode();
+            map.pm.toggleGlobalRemovalMode();
+            if(map.pm.globalRemovalModeEnabled()) showToast("Klik bidang di peta untuk menghapusnya.");
+            else showToast("Mode hapus dimatikan.");
+        }
+
+        let digitCounter = 1;
+        map.on('pm:create', (e) => {
+            const layer = e.layer;
+            const id = 'digit_' + Date.now();
+            const name = 'Hasil Digitasi ' + digitCounter++;
+            
+            layer.setStyle({ color: '#ec4899', weight: 2, fillColor: '#f472b6', fillOpacity: 0.5 });
+            layers[id] = layer; layer.options.id = id;
+            
+            buatMenuDiSidebar(id, name, layer);
+            showToast(name + " ditambahkan ke Panel Kiri.");
+        });
 
         // --- 2. RENDER CHART.JS (DARI DATA EXCEL BARU) ---
         let chartsRendered = false;
@@ -753,15 +784,19 @@
         function getWarna(key, val) {
             let v = String(val || "").toLowerCase();
             
-            if(key === 'kp2b') { return '#16a34a'; }
+            // LAYER KP2B Khusus warna Hijau terang
+            if(key === 'kp2b') {
+                return '#16a34a'; 
+            }
 
             if(key === 'pl') {
-                if(v.includes('sawah') || v.includes('tani')) return '#10b981'; 
+                if(v.includes('sawah') || v.includes('tani')) return '#10b981'; // Hijau
+                // FIX: Pekarangan masuk kelompok warna Permukiman (Merah)
                 if(v.includes('permukiman') || v.includes('rumah') || v.includes('pekarangan')) return '#f87171';
-                if(v.includes('tegalan') || v.includes('kebun')) return '#a3e635'; 
-                if(v.includes('sungai') || v.includes('air')) return '#38bdf8'; 
-                if(v.includes('penyangga') || v.includes('buffer')) return '#fbbf24'; 
-                if(v.includes('jalan')) return '#64748b'; 
+                if(v.includes('tegalan') || v.includes('kebun')) return '#a3e635'; // Hijau Muda
+                if(v.includes('sungai') || v.includes('air')) return '#38bdf8'; // Biru Air
+                if(v.includes('penyangga') || v.includes('buffer')) return '#fbbf24'; // Kuning Buffer
+                if(v.includes('jalan')) return '#64748b'; // Abu-abu
                 return '#94a3b8';
             }
             if(key === 'persil') {
@@ -802,6 +837,7 @@
                             style: function(f) {
                                 let p = f.properties || {};
                                 
+                                // Jika layer KP2B, styling khusus hijau arsir
                                 if (key === 'kp2b') {
                                     return { color: "#16a34a", weight: 2, fillColor: "#22c55e", fillOpacity: 0.4, dashArray: "4, 4" };
                                 }
@@ -842,7 +878,7 @@
             }
         }
 
-        // --- FITUR QUERY (DISEDERHANAKAN) ---
+        // --- FITUR QUERY BRUTE-FORCE (ANTI GAGAL UNTUK ATRIBUT GEOJSON ACAK) ---
         function terapkanFilter() {
             if(!layers['persil']) {
                 showToast("Memuat data Persil Tanah...");
@@ -859,22 +895,34 @@
 
             layers['persil'].eachLayer(function(layer) {
                 let p = layer.feature.properties;
-                let statusHak = String(p.status || p.STATUS || p.Status || "").toLowerCase();
-                let gunaLahan = String(p.jenis || p.JENIS || p.penggunaan || p.Penggunaan || "").toLowerCase();
+                // Gabungin semua value dari properties jadi satu text
+                let allValues = Object.values(p).join(" ").toLowerCase();
 
-                let cocokHak = (hakFilter === "") ? true : statusHak.includes(hakFilter);
-                let cocokGuna = (gunaFilter === "") ? true : gunaLahan.includes(gunaFilter);
+                let cocokHak = (hakFilter === "") ? true : allValues.includes(hakFilter);
+                let cocokGuna = (gunaFilter === "") ? true : allValues.includes(gunaFilter);
 
-                if (cocokHak && cocokGuna) {
-                    layer.setStyle({ opacity: 1, fillOpacity: 0.8, color: '#f59e0b', weight: 2 });
+                // Adaptasi khusus kalau user pilih permukiman tapi di data namanya pekarangan/rumah
+                if(gunaFilter === "permukiman" && (allValues.includes("pekarangan") || allValues.includes("rumah"))) {
+                    cocokGuna = true;
+                }
+
+                if (cocokHak && cocokGuna && (hakFilter !== "" || gunaFilter !== "")) {
+                    layer.setStyle({ opacity: 1, fillOpacity: 0.8, color: '#f59e0b', weight: 3 });
                     matchCount++;
                     bounds.extend(layer.getBounds());
+                } else if (hakFilter === "" && gunaFilter === "") {
+                    // Reset style
+                    layers['persil'].resetStyle(layer);
                 } else {
+                    // Hide layer
                     layer.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 });
                 }
             });
 
-            if(matchCount > 0) {
+            if(hakFilter === "" && gunaFilter === "") {
+                showToast("Menampilkan semua data persil.");
+                if(layers['persil'].getBounds) map.fitBounds(layers['persil'].getBounds());
+            } else if(matchCount > 0) {
                 map.fitBounds(bounds);
                 showToast(`Selesai! ${matchCount} bidang ditemukan.`);
             } else {
