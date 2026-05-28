@@ -37,6 +37,23 @@
         #toast { visibility: hidden; min-width: 250px; background-color: var(--primary); color: #fff; text-align: center; border-radius: 12px; padding: 16px 24px; position: fixed; z-index: 10000; left: 50%; bottom: 30px; font-weight: bold; font-size: 1rem; transform: translateX(-50%); box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.5s, bottom 0.5s ease-in-out; }
         #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
 
+        /* --- SISTEM LOGIN --- */
+        #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.3s ease; }
+        .auth-card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
+        .btn-close-auth { position: absolute; top: 15px; right: 20px; background: transparent; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .btn-close-auth:hover { color: white; transform: scale(1.1); }
+        .auth-form { display: none; }
+        .auth-form.active { display: block; animation: fadeIn 0.3s ease; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 0.9rem; color: #94a3b8; margin-bottom: 5px; font-weight: bold; }
+        .input-group input { width: 100%; padding: 12px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; transition: var(--transition); }
+        .input-group input:focus { border-color: var(--accent); }
+        .auth-btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: var(--transition); margin-top: 10px; }
+        .auth-btn:hover { background: #2563eb; transform: translateY(-2px); }
+        .auth-btn-guest { background: transparent; border: 2px solid #64748b; color: #cbd5e1; margin-top: 15px; }
+        .auth-btn-guest:hover { background: #64748b; color: white; }
+        .auth-switch { color: var(--accent); font-size: 0.9rem; margin-top: 20px; cursor: pointer; font-weight: bold; }
+
         /* --- TOMBOL HEADER NAVBAR UTAMA --- */
         .top-nav { position: absolute; top: 20px; right: 30px; z-index: 100; }
         .btn-top-login { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 12px 25px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
@@ -131,7 +148,7 @@
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; margin-top: -5px; box-shadow: 0 0 5px rgba(245, 158, 11, 0.5); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 5px; cursor: pointer; background: rgba(255,255,255,0.2); border-radius: 3px; }
 
-        /* --- UI FILTER & QUERY (Disederhanakan) --- */
+        /* Filter Query */
         .query-box { background: rgba(0,0,0,0.25); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
         .query-input { width: 100%; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: white; font-size: 0.9rem; margin-bottom:10px; outline: none;}
         .query-input option { background: var(--bg-card); color: white; }
@@ -191,10 +208,48 @@
     <div id="toast"><i class="fas fa-check-circle" style="color:#10b981; margin-right:8px;"></i> <span id="toast-msg">Notifikasi</span></div>
 
     <div class="top-nav" id="top-nav">
-        <button onclick="showToast('Sistem sedang dalam mode terbuka (Public Access).')" class="btn-top-login" id="btn-top-login">
+        <button onclick="bukaLogin()" class="btn-top-login" id="btn-top-login">
             <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i> 
-            <span id="text-top-login">MODE PUBLIK</span>
+            <span id="text-top-login">LOGIN SISTEM</span>
         </button>
+    </div>
+
+    <div id="auth-overlay">
+        <div class="auth-card auth-form active" id="form-login">
+            <button class="btn-close-auth" onclick="tutupLogin()"><i class="fas fa-times"></i></button>
+            <div class="login-brand" style="margin-bottom:20px; font-weight:bold; font-size:1.2rem; color:var(--accent);"><i class="fas fa-shield-halved"></i> PORTAL MASUK</div>
+            <form onsubmit="prosesLogin(event)">
+                <div class="input-group">
+                    <label>Email Terdaftar (Akses Admin)</label>
+                    <input type="email" id="login-email" placeholder="email@undip.ac.id" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="login-pass" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="auth-btn">MASUK SEBAGAI ADMIN</button>
+                <button type="button" class="auth-btn auth-btn-guest" onclick="prosesGuest()"><i class="fas fa-user-clock"></i> MASUK SEBAGAI TAMU</button>
+                <div class="auth-switch" onclick="switchAuth('register')">Belum punya akun Admin? Buat di sini.</div>
+            </form>
+        </div>
+
+        <div class="auth-card auth-form" id="form-register">
+            <button class="btn-close-auth" onclick="tutupLogin()"><i class="fas fa-times"></i></button>
+            <div class="login-brand" style="margin-bottom:5px; font-weight:bold; font-size:1.2rem; color:var(--primary);"><i class="fas fa-user-plus"></i> BUAT AKUN ADMIN</div>
+            <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:15px;">*Akun admin memiliki akses penuh untuk unduh & upload data spasial.</p>
+            <form onsubmit="prosesRegister(event)">
+                <div class="input-group">
+                    <label>Email Baru</label>
+                    <input type="email" id="reg-email" placeholder="Masukkan email" required>
+                </div>
+                <div class="input-group">
+                    <label>Buat Password</label>
+                    <input type="password" id="reg-pass" placeholder="Buat password" required>
+                </div>
+                <button type="submit" class="auth-btn" style="background:var(--primary);">DAFTARKAN AKUN</button>
+                <div class="auth-switch" onclick="switchAuth('login')">Sudah punya akun? Masuk.</div>
+            </form>
+        </div>
     </div>
 
     <div id="halaman-beranda" class="page-view active">
@@ -307,7 +362,7 @@
                 <div class="brand"><i class="fas fa-map" style="color:var(--accent);"></i> GEOPOLAN</div>
                 <div class="nav-controls">
                     <button class="nav-btn-panel btn-toggle-sidebar" onclick="toggleSidebar()"><i class="fas fa-layer-group"></i> <span>PANEL DATA</span></button>
-                    <button class="nav-btn-panel" id="btn-toggle-digit" onclick="toggleDigitasiTools()" style="color:var(--accent); border-color:var(--accent);"><i class="fas fa-pen-ruler"></i> <span>MODE DIGITASI</span></button>
+                    <button class="nav-btn-panel" id="btn-toggle-digit" onclick="toggleDigitasiTools()" style="color:var(--accent); border-color:var(--accent); display:none;"><i class="fas fa-pen-ruler"></i> <span>MODE DIGITASI</span></button>
                     <button onclick="tutupPeta()" class="nav-btn-back"><i class="fas fa-arrow-left"></i> <span>KEMBALI</span></button>
                 </div>
             </nav>
@@ -406,6 +461,8 @@
         // Deklarasi Peta Global
         var map = L.map('map', { center: [-7.6105, 110.6600], zoom: 14, zoomControl: false });
 
+        let userRole = sessionStorage.getItem("userRole") || null; 
+
         // --- SISTEM VISITOR COUNTER ---
         function initVisitorCount() {
             let visits = localStorage.getItem('visitorCount');
@@ -426,8 +483,20 @@
         // --- INIT AWAL ---
         document.addEventListener("DOMContentLoaded", () => {
             initVisitorCount(); 
+            // Langsung buka layar (Akses Publik Default)
             document.body.classList.remove("locked");
             initChart(); 
+            
+            // Cek apakah admin sudah login sebelumnya
+            if (sessionStorage.getItem("isLoggedIn") === "true") {
+                updateLoginButtonUI();
+                terapkanAturanHakAkses(); 
+            } else {
+                // Set default jadi guest
+                sessionStorage.setItem("userRole", "guest");
+                userRole = "guest";
+                terapkanAturanHakAkses();
+            }
         });
 
         // --- SISTEM CUSTOM TOOLBAR ALA BHUMI ATR/BPN ---
@@ -498,6 +567,98 @@
             buatMenuDiSidebar(id, name, layer);
             showToast(name + " ditambahkan ke Panel Kiri.");
         });
+
+        // --- SISTEM LOGIN KHUSUS ADMIN ---
+        function bukaLogin() {
+            if(userRole === 'admin') {
+                if(confirm("Anda saat ini login sebagai Admin. Ingin keluar (Logout)?")) {
+                    sessionStorage.clear();
+                    location.reload();
+                }
+            } else {
+                document.getElementById('auth-overlay').style.display = "flex";
+                setTimeout(() => { document.getElementById('auth-overlay').style.opacity = "1"; }, 10);
+            }
+        }
+
+        function tutupLogin() {
+            document.getElementById('auth-overlay').style.opacity = "0";
+            setTimeout(() => { document.getElementById('auth-overlay').style.display = "none"; }, 300);
+        }
+
+        function updateLoginButtonUI() {
+            let btnText = document.getElementById('text-top-login');
+            if(userRole === 'admin') {
+                btnText.innerText = "PROFIL ADMIN";
+                document.getElementById('btn-top-login').style.background = "var(--primary)";
+            } else {
+                btnText.innerText = "MODE PUBLIK";
+                document.getElementById('btn-top-login').style.background = "rgba(255,255,255,0.1)";
+            }
+        }
+
+        function switchAuth(type) {
+            document.getElementById('form-login').classList.remove('active');
+            document.getElementById('form-register').classList.remove('active');
+            document.getElementById('form-' + type).classList.add('active');
+        }
+
+        function prosesRegister(e) {
+            e.preventDefault();
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            localStorage.setItem('user_' + email, pass);
+            alert('Akun admin berhasil dibuat! Silakan masuk kembali.');
+            switchAuth('login');
+        }
+
+        function prosesLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            const savedPass = localStorage.getItem('user_' + email);
+            
+            if (savedPass === pass) {
+                loginSukses("admin");
+            } else {
+                alert('Akses Ditolak! Email atau Password salah. (Atau akun belum didaftarkan)');
+            }
+        }
+
+        function prosesGuest() {
+            loginSukses("guest");
+        }
+
+        function loginSukses(role) {
+            sessionStorage.setItem("isLoggedIn", "true");
+            sessionStorage.setItem("userRole", role);
+            userRole = role;
+
+            document.getElementById('auth-overlay').style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById('auth-overlay').style.display = "none";
+                updateLoginButtonUI();
+                terapkanAturanHakAkses();
+                
+                if(role === 'admin') showToast("Selamat Datang Admin! Mode Edit & Unduh diaktifkan.");
+                else showToast("Berhasil masuk ke mode Pengunjung Biasa.");
+            }, 300);
+        }
+
+        function terapkanAturanHakAkses() {
+            if (userRole === "guest") {
+                document.getElementById('btn-upload-file').style.display = 'none';
+                document.getElementById('title-unduh').style.display = 'none';
+                document.getElementById('btn-group-unduh').style.display = 'none';
+                document.getElementById('btn-toggle-digit').style.display = 'none'; 
+                if (map.pm) map.pm.removeControls();
+            } else {
+                document.getElementById('btn-upload-file').style.display = 'flex';
+                document.getElementById('title-unduh').style.display = 'flex';
+                document.getElementById('btn-group-unduh').style.display = 'grid';
+                document.getElementById('btn-toggle-digit').style.display = 'flex'; 
+            }
+        }
 
         // --- 2. RENDER CHART.JS (DARI DATA EXCEL BARU) ---
         let chartsRendered = false;
@@ -592,19 +753,15 @@
         function getWarna(key, val) {
             let v = String(val || "").toLowerCase();
             
-            // LAYER KP2B Khusus warna Hijau terang
-            if(key === 'kp2b') {
-                return '#16a34a'; 
-            }
+            if(key === 'kp2b') { return '#16a34a'; }
 
             if(key === 'pl') {
-                if(v.includes('sawah') || v.includes('tani')) return '#10b981'; // Hijau
-                // FIX: Pekarangan masuk kelompok warna Permukiman (Merah)
+                if(v.includes('sawah') || v.includes('tani')) return '#10b981'; 
                 if(v.includes('permukiman') || v.includes('rumah') || v.includes('pekarangan')) return '#f87171';
-                if(v.includes('tegalan') || v.includes('kebun')) return '#a3e635'; // Hijau Muda
-                if(v.includes('sungai') || v.includes('air')) return '#38bdf8'; // Biru Air
-                if(v.includes('penyangga') || v.includes('buffer')) return '#fbbf24'; // Kuning Buffer
-                if(v.includes('jalan')) return '#64748b'; // Abu-abu
+                if(v.includes('tegalan') || v.includes('kebun')) return '#a3e635'; 
+                if(v.includes('sungai') || v.includes('air')) return '#38bdf8'; 
+                if(v.includes('penyangga') || v.includes('buffer')) return '#fbbf24'; 
+                if(v.includes('jalan')) return '#64748b'; 
                 return '#94a3b8';
             }
             if(key === 'persil') {
@@ -645,7 +802,6 @@
                             style: function(f) {
                                 let p = f.properties || {};
                                 
-                                // Jika layer KP2B, styling khusus hijau arsir
                                 if (key === 'kp2b') {
                                     return { color: "#16a34a", weight: 2, fillColor: "#22c55e", fillOpacity: 0.4, dashArray: "4, 4" };
                                 }
@@ -686,13 +842,11 @@
             }
         }
 
-        // --- FITUR QUERY (DISEDERHANAKAN - HANYA DROPDOWN) ---
+        // --- FITUR QUERY (DISEDERHANAKAN) ---
         function terapkanFilter() {
             if(!layers['persil']) {
                 showToast("Memuat data Persil Tanah...");
                 toggleGeoJsonLayer('persil', 'persil_polan.geojson');
-                
-                // Beri waktu 1 detik agar layer ter-load, lalu panggil fungsi ini lagi
                 setTimeout(terapkanFilter, 1000);
                 return;
             }
