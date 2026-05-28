@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
 
     <style>
         :root { --bg-dark: #0f172a; --bg-card: #1e293b; --glass: rgba(15, 23, 42, 0.95); --accent: #f59e0b; --primary: #3b82f6; --text: #f8fafc; --transition: all 0.3s ease; }
@@ -62,7 +61,7 @@
         .section-title h2 span { color: var(--accent); }
         .section-title p { color: #94a3b8; max-width: 700px; margin: 0 auto; font-size: 1.05rem; }
 
-        /* --- STATISTIK & DATA INTERAKTIF --- */
+        /* --- STATISTIK & DATA --- */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 50px; }
         .stat-card { background: var(--bg-card); padding: 30px 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); transition: var(--transition); }
         .stat-card:hover { transform: translateY(-5px); border-color: var(--primary); }
@@ -76,16 +75,14 @@
         .data-text { flex: 1; min-width: 350px; display: flex; flex-direction: column; justify-content: center; }
         .data-text h3 { color: var(--accent); font-size: 1.8rem; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
         .data-text p { color: #cbd5e1; line-height: 1.7; margin-bottom: 20px; text-align: justify; }
-        
         .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; }
         .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .data-table th { background: rgba(59, 130, 246, 0.2); color: var(--primary); font-size: 0.85rem; text-transform: uppercase; }
         .data-table td { color: #cbd5e1; font-size: 0.9rem; }
-        
-        .btn-excel { display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 20px; transition: var(--transition); width: fit-content; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);}
-        .btn-excel:hover { background: #059669; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5); }
+        .btn-excel { display: inline-flex; align-items: center; gap: 8px; background: #10b981; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 20px; transition: var(--transition); width: fit-content;}
+        .btn-excel:hover { background: #059669; transform: translateY(-3px); }
 
-        /* --- PROFIL KELOMPOK D3 PTRP --- */
+        /* --- PROFIL TIM --- */
         .team-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; max-width: 1150px; margin: 0 auto; }
         .team-card { flex: 0 1 240px; background: var(--bg-card); border-radius: 15px; overflow: hidden; text-align: center; border: 1px solid rgba(255,255,255,0.05); transition: var(--transition); padding-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .team-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
@@ -96,18 +93,21 @@
 
         @media (max-width: 768px) { .data-wrapper.reverse { flex-direction: column; } }
 
-        /* --- WEBGIS SECTION STYLES --- */
+        /* --- WEBGIS UI KESELURUHAN --- */
         #map-container { height: 100vh; width: 100vw; position: relative; overflow: hidden; }
+        #map { height: 100%; width: 100%; z-index: 1; }
+        .leaflet-top { top: 90px !important; } 
+
+        /* Navigasi Atas WebGIS */
         .gis-nav { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 96%; background: var(--glass); padding: 15px 30px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-between; align-items: center; z-index: 2000; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .brand { font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 12px; font-size: 1.1rem; }
         .nav-controls { display: flex; gap: 15px; }
-        
-        .nav-btn-panel { background: rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 10px; font-weight: 800; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; color: white; }
-        .nav-btn-panel:hover { background: var(--accent); transform: translateY(-2px); }
-        
-        .nav-btn-back { background: var(--primary); padding: 12px 20px; border-radius: 10px; font-weight: 800; font-size: 0.85rem; border: none; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; color: white; }
+        .nav-btn-back { padding: 12px 20px; border-radius: 10px; font-weight: 800; font-size: 0.85rem; border: none; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 8px; color: white; background: var(--primary); }
         .nav-btn-back:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
-
+        .btn-toggle-sidebar { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); padding: 12px 20px; border-radius: 10px; color: white; cursor: pointer; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; transition: 0.3s;}
+        .btn-toggle-sidebar:hover { background: var(--accent); border-color: var(--accent); color: white;}
+        
+        /* PANEL KIRI (DATA EXPLORER) */
         .sidebar { position: absolute; top: 100px; left: -400px; width: 360px; background: var(--glass); border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); padding: 25px; z-index: 2000; transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1); max-height: calc(100vh - 130px); overflow-y: auto; color: white; box-shadow: 10px 10px 30px rgba(0,0,0,0.5); }
         .sidebar.active { left: 20px; }
         .sidebar-section-title { font-size: 0.75rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; margin: 20px 0 10px 5px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
@@ -141,33 +141,37 @@
         .reset-btn { width: 100%; padding: 10px; border-radius: 8px; background: transparent; color: #cbd5e1; border: 1px solid #475569; cursor: pointer; font-weight: 600; margin-top: 5px; transition: 0.3s; }
         .reset-btn:hover { background: #334155; color: white; }
 
-        #map { height: 100%; width: 100%; z-index: 1; }
-        .leaflet-top { top: 90px !important; } 
+        /* --- KOTAK KOORDINAT --- */
+        .coord-display { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-card); padding: 10px 25px; border-radius: 50px; border: 2px solid var(--primary); color: #cbd5e1; font-size: 0.85rem; font-weight: 600; z-index: 1000; font-family: monospace; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; pointer-events: none; }
+
+        /* --- LEGENDA (RAPI DI BAWAH KIRI) --- */
+        .legend-box { background: var(--glass); border-radius: 15px; padding: 18px; border: 1px solid rgba(255,255,255,0.1); width: 250px; color: white; font-size: 0.8rem; max-height: 400px; overflow-y: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .legend-title { font-size: 0.8rem; color: var(--accent); margin-bottom: 12px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+        .legend-color { width: 14px; height: 14px; border-radius: 3px; display: inline-block; margin-right: 8px; border: 1px solid rgba(255,255,255,0.2); }
+        .legend-section { margin-bottom: 15px; }
+        .legend-section-title { font-weight: 800; font-size: 0.7rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase;}
+        .legend-item { display: flex; align-items: center; margin-bottom: 6px; font-size: 0.75rem; }
+        .legend-line { width: 16px; height: 3px; display: inline-block; margin-right: 8px; }
+
+        /* --- MAP CONTROLS BAWAH KANAN (COMPACT & RAPI) --- */
+        .custom-tools-wrapper { background: var(--glass); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 8px 15px rgba(0,0,0,0.4); margin-bottom: 20px; margin-right: 10px; }
+        .custom-tools-wrapper a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; color: white; text-decoration: none; background: #1e293b; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.3s; font-size: 1rem; }
+        .custom-tools-wrapper a:last-child { border-bottom: none; }
+        .custom-tools-wrapper a:hover { background: var(--primary); color: white; }
         
-        .custom-pin { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.6); font-size: 16px; transition: transform 0.2s; }
-        .custom-pin:hover { transform: scale(1.1); }
         .gps-pulse { background: #3b82f6; border-radius: 50%; border: 3px solid white; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
 
-        /* Kembalikan CSS Asli untuk Legenda & Controls Map Bawah Kanan */
-        .legend-box { background: var(--glass); border-radius: 15px; padding: 18px; border: 1px solid rgba(255,255,255,0.1); width: 250px; display: block; color: white; font-size: 0.8rem; max-height: 400px; overflow-y: auto; }
-        .legend-title { font-size: 0.8rem; color: var(--accent); margin-bottom: 12px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-        .legend-color { width: 14px; height: 14px; border-radius: 3px; display: inline-block; margin-right: 8px; }
-        
-        .custom-control-btn { background: var(--glass) !important; color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; width: 40px !important; height: 40px !important; display: flex !important; align-items: center; justify-content: center; border-radius: 10px !important; cursor: pointer; font-size: 1.1rem; transition: var(--transition); text-decoration: none; margin-bottom: 5px; }
-        .custom-control-btn:hover { background: var(--accent) !important; color: white !important; transform: scale(1.05); }
-
-        .coord-display { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-card); padding: 10px 25px; border-radius: 50px; border: 2px solid var(--primary); color: #cbd5e1; font-size: 0.85rem; font-weight: 600; z-index: 1000; font-family: monospace; pointer-events: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;}
-        
+        /* --- POPUP --- */
         .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #1e293b; color: white; border: 1px solid rgba(255,255,255,0.2); }
         .attr-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
         .attr-table th { text-align: left; color: var(--accent); padding: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .attr-table td { padding: 5px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        
         .hover-tooltip { background: rgba(15, 23, 42, 0.9); color: white; border: 1px solid var(--accent); border-radius: 5px; font-weight: bold; box-shadow: none; padding: 4px 8px; font-size: 0.8rem;}
         .leaflet-tooltip-top:before, .leaflet-tooltip-bottom:before, .leaflet-tooltip-left:before, .leaflet-tooltip-right:before { border: none !important; }
 
-        /* Geoman Tweaks (Native Leaflet Controls) */
+        /* --- GEOMAN (DIGITASI) --- */
+        /* Kita taruh di Top Right, style bawaan Geoman sudah otomatis di sana */
         .leaflet-pm-toolbar .button-container a { background-color: #1e293b !important; color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 8px !important; margin-bottom: 2px;}
         .leaflet-pm-toolbar .button-container a:hover { background-color: var(--accent) !important; }
     </style>
@@ -183,9 +187,7 @@
         </button>
     </div>
 
-    <!-- AUTHENTICATION (SIMULASI DATABASE LOKAL) -->
     <div id="auth-overlay">
-        <!-- Form Login -->
         <div class="auth-card auth-form active" id="form-login">
             <button class="btn-close-auth" onclick="tutupLogin()"><i class="fas fa-times"></i></button>
             <div class="login-brand" style="margin-bottom:20px; font-weight:800; color:var(--accent);"><i class="fas fa-shield-halved"></i> PORTAL MASUK</div>
@@ -204,7 +206,6 @@
             </form>
         </div>
 
-        <!-- Form Register -->
         <div class="auth-card auth-form" id="form-register">
             <button class="btn-close-auth" onclick="tutupLogin()"><i class="fas fa-times"></i></button>
             <div class="login-brand" style="margin-bottom:5px; font-weight:800; color:var(--primary);"><i class="fas fa-user-plus"></i> BUAT AKUN ADMIN</div>
@@ -224,7 +225,6 @@
         </div>
     </div>
 
-    <!-- HALAMAN BERANDA -->
     <div id="halaman-beranda" class="page-view active">
         <section class="hero" id="home">
             <h1 style="margin-top: 50px;">Sistem Spasial Polanharjo</h1>
@@ -235,7 +235,6 @@
             </div>
         </section>
 
-        <!-- DATA SEKTORAL / EXCEL INTERAKTIF -->
         <section class="section-container" id="data-interaktif">
             <div class="section-title">
                 <h2>Analisis <span>Sektoral Wilayah</span></h2>
@@ -250,10 +249,13 @@
             </div>
 
             <div class="data-wrapper">
-                <div class="data-chart"><h4 style="text-align:center; margin-bottom:15px;">Proporsi Guna Lahan Eksisting</h4><canvas id="plChart"></canvas></div>
+                <div class="data-chart">
+                    <h4 style="color:white; margin-bottom: 20px; font-size:1.1rem; text-align:center;">Proporsi Guna Lahan Eksisting</h4>
+                    <canvas id="plChart" width="400" height="250"></canvas>
+                </div>
                 <div class="data-text">
                     <h3><i class="fas fa-leaf"></i> Tata Guna Lahan</h3>
-                    <p>Berdasarkan ekstraksi data spasial, lanskap Kecamatan Polanharjo didominasi secara absolut oleh sektor agrikultur. Tingginya persentase lahan sawah irigasi teknis menegaskan fungsi wilayah ini sebagai lumbung pangan berkelanjutan yang harus diproteksi.</p>
+                    <p>Berdasarkan ekstraksi data spasial, lanskap Kecamatan Polanharjo didominasi secara absolut oleh sektor agrikultur. Tingginya persentase lahan sawah irigasi teknis menegaskan fungsi wilayah ini sebagai lumbung pangan berkelanjutan.</p>
                     <table class="data-table">
                         <tr><th>Klasifikasi Lahan</th><th>Luasan (Ha)</th><th>Persentase</th></tr>
                         <tr><td>Sawah Irigasi</td><td>1.803,50</td><td>71,6%</td></tr>
@@ -266,10 +268,13 @@
             </div>
 
             <div class="data-wrapper reverse">
-                <div class="data-chart"><h4 style="text-align:center; margin-bottom:15px;">Struktur Kependudukan Berdasarkan Usia</h4><canvas id="demoChart"></canvas></div>
+                <div class="data-chart">
+                    <h4 style="color:white; margin-bottom: 20px; font-size:1.1rem; text-align:center;">Struktur Kependudukan Berdasarkan Usia</h4>
+                    <canvas id="demoChart" width="400" height="250"></canvas>
+                </div>
                 <div class="data-text">
                     <h3><i class="fas fa-users-viewfinder"></i> Dinamika Kependudukan</h3>
-                    <p>Struktur demografi Polanharjo menunjukkan tren "Bonus Demografi" di mana jumlah penduduk usia produktif mendominasi. Ini menuntut penyediaan ruang untuk sektor ekonomi (UMKM wisata Umbul) dan fasum yang memadai.</p>
+                    <p>Struktur demografi Polanharjo menunjukkan tren "Bonus Demografi". Hal ini menuntut penyediaan ruang untuk sektor ekonomi (UMKM wisata Umbul) dan fasum yang memadai agar kapasitas tampung (*Carrying Capacity*) permukiman terjaga.</p>
                     <table class="data-table">
                         <tr><th>Kelompok Umur</th><th>Jumlah (Jiwa)</th><th>Keterangan</th></tr>
                         <tr><td>0 - 14 Tahun</td><td>8.500</td><td>Usia Belum Produktif</td></tr>
@@ -281,7 +286,10 @@
             </div>
 
             <div class="data-wrapper">
-                <div class="data-chart"><h4 style="text-align:center; margin-bottom:15px;">Klasifikasi Kemiringan Lereng</h4><canvas id="fisikChart"></canvas></div>
+                <div class="data-chart">
+                    <h4 style="color:white; margin-bottom: 20px; font-size:1.1rem; text-align:center;">Klasifikasi Kemiringan Lereng</h4>
+                    <canvas id="fisikChart" width="400" height="250"></canvas>
+                </div>
                 <div class="data-text">
                     <h3><i class="fas fa-mountain-sun"></i> Morfologi & Fisik Alam</h3>
                     <p>Terletak di lereng landai Dataran Aluvial (kemiringan 0-8%), membuat kawasan ini sangat ideal untuk pengembangan infrastruktur dan menekan biaya perataan tanah.</p>
@@ -304,12 +312,12 @@
             </div>
         </section>
 
-        <!-- TIM PENYUSUN KELOMPOK -->
         <section class="section-container" id="tim-penyusun" style="padding-top: 20px;">
             <div class="section-title">
                 <h2>Tim <span>Studio Poland</span></h2>
                 <p>Analis spasial dan pengembang sistem dari Program Studi DIV Perencanaan Tata Ruang dan Pertanahan (PTRP), Sekolah Vokasi Universitas Diponegoro.</p>
             </div>
+
             <div class="team-grid">
                 <div class="team-card"><img src="img/fathin.png" alt="Fathin" class="team-img" onerror="this.src='https://via.placeholder.com/300x400/1e293b/f59e0b?text=Fathin'"><div class="team-info"><div class="team-name">Mohammad Fathin Dj. A.</div><div class="team-nim">40030623620026</div></div></div>
                 <div class="team-card"><img src="img/aaron.png" alt="Aaron" class="team-img" onerror="this.src='https://via.placeholder.com/300x400/1e293b/f59e0b?text=Aaron'"><div class="team-info"><div class="team-name">Aaron Nosel Rifki R.</div><div class="team-nim">40030623630062</div></div></div>
@@ -327,6 +335,7 @@
                 <a href="https://www.instagram.com/studio.poland/" target="_blank" style="color:#cbd5e1;"><i class="fab fa-instagram"></i></a>
             </div>
             <div>&copy; 2026 Tim Studio Poland | Program DIV PTRP Sekolah Vokasi UNDIP</div>
+            
             <div style="margin-top: 15px; font-size: 0.85rem; color: #94a3b8; background: rgba(255,255,255,0.05); padding: 8px 20px; border-radius: 50px; display:inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.1);">
                 <i class="fas fa-chart-line" style="color:var(--accent);"></i> 
                 Total Pengunjung WebGIS: <span id="visitor-count" style="color:white; font-weight:800; font-family: monospace; font-size: 1rem;">0</span>
@@ -334,22 +343,18 @@
         </footer>
     </div>
 
-    <!-- HALAMAN MAP PETA INTERAKTIF -->
     <div id="halaman-peta" class="page-view">
         <div id="map-container">
-            <!-- Navbar Map -->
             <nav class="gis-nav">
                 <div class="brand"><i class="fas fa-map" style="color:var(--accent);"></i> WEBGIS POLANHARJO</div>
                 <div class="nav-controls">
-                    <button class="nav-btn-panel btn-toggle-sidebar" onclick="toggleSidebar()"><i class="fas fa-layer-group"></i> <span>PANEL DATA</span></button>
-                    <!-- Tombol Aktifkan/Matikan Digitasi Geoman -->
-                    <button class="nav-btn-panel" id="btn-toggle-digit" onclick="toggleDigitasiTools()" style="color:var(--accent); border-color:var(--accent); display:none;"><i class="fas fa-pen-ruler"></i> <span>MODE DIGITASI</span></button>
+                    <button class="btn-toggle-sidebar" onclick="toggleSidebar()"><i class="fas fa-layer-group"></i> <span>PANEL DATA</span></button>
+                    <button class="btn-toggle-sidebar" id="btn-toggle-digit" onclick="toggleDigitasiTools()" style="color:var(--accent); border-color:var(--accent); display:none;"><i class="fas fa-pen-ruler"></i> <span>MODE DIGITASI</span></button>
                     <button onclick="tutupPeta()" class="nav-btn-back"><i class="fas fa-arrow-left"></i> <span>KEMBALI</span></button>
                 </div>
             </nav>
 
-            <!-- Panel Kiri (Sidebar) -->
-            <aside class="sidebar" id="sidebar">
+            <aside class="sidebar active" id="sidebar">
                 <h3 style="color: var(--accent); margin-bottom: 15px; font-weight: 800;">DATA EXPLORER</h3>
                 
                 <div class="sidebar-section-title"><i class="fas fa-magnifying-glass-location"></i> Query & Analisis Persil</div>
@@ -413,19 +418,20 @@
                 <div id="user-layers-container"></div>
             </aside>
 
-            <!-- MAP CONTAINER -->
             <div id="map"></div>
             
             <div id="coord-display" class="coord-display"><i class="fas fa-location-dot" style="color:var(--accent);"></i> KOORDINAT: - <span>(WGS 84 / EPSG:4326)</span></div>
         </div>
     </div>
 
-    <!-- Scripts Leaflet & Geoman -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
 
     <script>
+        // Deklarasi Peta Global
+        var map = L.map('map', { center: [-7.6105, 110.6600], zoom: 14, zoomControl: false });
+
         let userRole = sessionStorage.getItem("userRole") || null; 
 
         // --- SISTEM VISITOR COUNTER ---
@@ -447,6 +453,7 @@
         // --- 1. SISTEM SIMULASI DATABASE LOGIN/DAFTAR ---
         document.addEventListener("DOMContentLoaded", () => {
             initVisitorCount(); 
+
             if (sessionStorage.getItem("isLoggedIn") === "true") {
                 document.getElementById('auth-overlay').style.display = "none";
                 document.body.classList.remove("locked");
@@ -550,14 +557,14 @@
             }
         }
 
-        // --- SISTEM TOGGLE GEOMAN TOOLS (BAWAAN LEAFLET PM DI KANAN ATAS) ---
+        // --- TOGGLE GEOMAN TOOLS (KANAN ATAS) ---
         let isModeDigitasi = false;
         
         function toggleDigitasiTools() {
             let btnToggle = document.getElementById('btn-toggle-digit');
             
             if(!isModeDigitasi) {
-                // Munculin tool bawaan Geoman di kanan atas (seperti BHUMI ATR/BPN)
+                // Toolbar Geoman native dimunculkan di Kanan Atas (Top Right)
                 map.pm.addControls({ 
                     position: 'topright', 
                     drawMarker: true, 
@@ -577,7 +584,6 @@
                 showToast("Mode Digitasi Aktif. Gunakan alat di Kanan Atas peta.");
                 isModeDigitasi = true;
             } else {
-                // Sembunyikan dan matikan
                 map.pm.removeControls();
                 map.pm.disableDraw();
                 map.pm.disableGlobalEditMode();
@@ -648,9 +654,7 @@
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 
-        // --- 4. MAPS CORE & BASEMAPS ---
-        var map = L.map('map', { center: [-7.6105, 110.6600], zoom: 14, zoomControl: false });
-        
+        // --- 4. MAPS BASEMAPS ---
         var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
         var googleMaps = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains:['mt0','mt1','mt2','mt3'] });
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png');
@@ -895,7 +899,7 @@
                     showToast("Mode edit selesai.");
                 } else {
                     if (layers[id].eachLayer) {
-                        showToast("Gunakan Toolbar Geoman di kanan untuk edit grup layer.");
+                        showToast("Gunakan Menu Editing di panel kanan untuk mengedit grup GeoJSON.");
                         return;
                     }
                     layers[id].pm.enable({ allowSelfIntersection: false });
@@ -926,11 +930,12 @@
             }
         }
 
-        // --- 7. LEGENDA KARTOGRAFI ---
-        var legend = L.control({position: 'bottomright'});
+        // --- 7. LEGENDA KARTOGRAFI (DIPERBAIKI POSISINYA) ---
+        // Legenda dilepas dari posisi absolute murni, ngikut ke kontrol bawaan leaflet di pojok kiri bawah.
+        var legend = L.control({position: 'bottomleft'});
         legend.onAdd = function() { 
             var div = L.DomUtil.create('div', 'legend-box'); div.id = 'legend'; 
-            div.innerHTML = '<div class="legend-title">Legenda WebGIS</div><div id="legend-content">Memuat...</div>'; 
+            div.innerHTML = '<div class="legend-title">Legenda WebGIS</div><div id="legend-content"><p style="color:#94a3b8; font-style:italic;">Pilih layer di panel kiri untuk memunculkan legenda.</p></div>'; 
             return div; 
         };
         legend.addTo(map);
@@ -954,10 +959,10 @@
             if (!active) html = '<p style="color:#94a3b8; font-style:italic;">Pilih layer di panel kiri untuk memunculkan standar simbol kartografi.</p>';
             content.innerHTML = html;
         }
-        updateLegend();
 
-        // --- 8. MAP VIEW CONTROLS & GPS TRACKING ---
+        // --- 8. MAP VIEW CONTROLS & GPS TRACKING (DIPERBAIKI POSISINYA) ---
         let userMarker = null; let userRadius = null;
+        
         map.on('locationfound', function(e) {
             let gpsIconNode = document.getElementById('icon-gps'); if(gpsIconNode) gpsIconNode.className = 'fas fa-location-crosshairs';
             let radius = e.accuracy / 2;
@@ -971,28 +976,40 @@
             showToast("Akses lokasi ditolak atau sinyal GPS tidak ditemukan.");
         });
 
+        // Kontrol custom kita pasang di bottomright, bentuk vertikal memanjang yang rapi.
         var customControls = L.control({position: 'bottomright'});
         customControls.onAdd = function (map) {
-            var c = L.DomUtil.create('div', 'custom-controls-container');
+            var c = L.DomUtil.create('div', 'custom-tools-wrapper');
             
-            var btnBase = L.DomUtil.create('a', 'custom-control-btn', c); 
-            btnBase.innerHTML = '<i class="fas fa-layer-group"></i>'; btnBase.title = "Ganti Peta Dasar (Basemap)";
+            var btnBase = L.DomUtil.create('a', '', c); 
+            btnBase.innerHTML = '<i class="fas fa-layer-group"></i>'; 
+            btnBase.title = "Ganti Peta Dasar (Basemap)";
             var basemaps = [satellite, googleMaps, osm]; var currentMapIndex = 0;
+            
             L.DomEvent.on(btnBase, 'click', function(e) { 
                 L.DomEvent.preventDefault(e); map.removeLayer(basemaps[currentMapIndex]);
                 currentMapIndex = (currentMapIndex + 1) % basemaps.length; basemaps[currentMapIndex].addTo(map);
                 if(currentMapIndex === 0) btnBase.innerHTML = '<i class="fas fa-layer-group"></i>';
                 else if(currentMapIndex === 1) btnBase.innerHTML = '<i class="fab fa-google"></i>';
                 else btnBase.innerHTML = '<i class="fas fa-map"></i>'; 
-                showToast("Basemap diubah.");
             });
             
-            L.DomUtil.create('div', '', c).style.height = '10px';
-            var btnIn = L.DomUtil.create('a', 'custom-control-btn', c); btnIn.innerHTML = '<i class="fas fa-plus"></i>'; L.DomEvent.on(btnIn, 'click', function(e) { L.DomEvent.preventDefault(e); map.zoomIn(); });
-            var btnHome = L.DomUtil.create('a', 'custom-control-btn', c); btnHome.innerHTML = '<i class="fas fa-house"></i>'; btnHome.title = "Lokasi Awal Polanharjo"; L.DomEvent.on(btnHome, 'click', function(e) { L.DomEvent.preventDefault(e); map.setView([-7.6105, 110.6600], 14); });
-            var btnOut = L.DomUtil.create('a', 'custom-control-btn', c); btnOut.innerHTML = '<i class="fas fa-minus"></i>'; L.DomEvent.on(btnOut, 'click', function(e) { L.DomEvent.preventDefault(e); map.zoomOut(); });
-            L.DomUtil.create('div', '', c).style.height = '10px';
-            var btnGPS = L.DomUtil.create('a', 'custom-control-btn', c); btnGPS.innerHTML = '<i id="icon-gps" class="fas fa-location-crosshairs"></i>'; btnGPS.title = "Lacak Lokasi Saya (GPS)";
+            var btnIn = L.DomUtil.create('a', '', c); 
+            btnIn.innerHTML = '<i class="fas fa-plus"></i>'; 
+            L.DomEvent.on(btnIn, 'click', function(e) { L.DomEvent.preventDefault(e); map.zoomIn(); });
+            
+            var btnOut = L.DomUtil.create('a', '', c); 
+            btnOut.innerHTML = '<i class="fas fa-minus"></i>'; 
+            L.DomEvent.on(btnOut, 'click', function(e) { L.DomEvent.preventDefault(e); map.zoomOut(); });
+            
+            var btnHome = L.DomUtil.create('a', '', c); 
+            btnHome.innerHTML = '<i class="fas fa-house"></i>'; 
+            btnHome.title = "Lokasi Awal Polanharjo"; 
+            L.DomEvent.on(btnHome, 'click', function(e) { L.DomEvent.preventDefault(e); map.setView([-7.6105, 110.6600], 14); });
+
+            var btnGPS = L.DomUtil.create('a', '', c); 
+            btnGPS.innerHTML = '<i id="icon-gps" class="fas fa-location-crosshairs"></i>'; 
+            btnGPS.title = "Lacak Lokasi Saya (GPS)";
             L.DomEvent.on(btnGPS, 'click', function(e) { L.DomEvent.preventDefault(e); document.getElementById('icon-gps').className = 'fas fa-spinner fa-spin'; map.locate({setView: true, maxZoom: 17, enableHighAccuracy: true}); });
 
             return c;
