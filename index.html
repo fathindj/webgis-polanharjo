@@ -155,8 +155,8 @@
         /* --- KOTAK KOORDINAT --- */
         .coord-display { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-card); padding: 10px 25px; border-radius: 50px; border: 2px solid var(--primary); color: #cbd5e1; font-size: 0.85rem; font-weight: 600; z-index: 1000; font-family: monospace; pointer-events: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;}
 
-        /* --- LEGENDA --- */
-        .legend-box { background: var(--glass); border-radius: 15px; padding: 18px; border: 1px solid rgba(255,255,255,0.1); width: 250px; color: white; font-size: 0.8rem; max-height: 400px; overflow-y: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        /* --- LEGENDA (KANAN BAWAH, MURNI LEAFLET) --- */
+        .legend-box { background: var(--glass); border-radius: 15px; padding: 18px; border: 1px solid rgba(255,255,255,0.1); width: 250px; color: white; font-size: 0.8rem; max-height: 400px; overflow-y: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 10px; margin-right: 10px; pointer-events: auto; }
         .legend-title { font-size: 0.8rem; color: var(--accent); margin-bottom: 12px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .legend-color { width: 14px; height: 14px; border-radius: 3px; display: inline-block; margin-right: 8px; border: 1px solid rgba(255,255,255,0.2); }
         .legend-section { margin-bottom: 15px; }
@@ -164,7 +164,7 @@
         .legend-item { display: flex; align-items: center; margin-bottom: 6px; font-size: 0.75rem; }
         .legend-line { width: 16px; height: 3px; display: inline-block; margin-right: 8px; }
 
-        /* --- MAP CONTROLS KANAN BAWAH (HORIZONTAL / MENDATAR) --- */
+        /* --- MAP CONTROLS KANAN BAWAH (HORIZONTAL / MENDATAR DI BAWAH LEGENDA) --- */
         .custom-tools-wrapper { background: var(--glass); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); display: flex; flex-direction: row; gap: 5px; padding: 5px; box-shadow: 0 8px 15px rgba(0,0,0,0.4); margin-bottom: 20px; margin-right: 10px; pointer-events: auto; }
         .custom-tools-wrapper a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; color: white; text-decoration: none; background: #1e293b; border-radius: 8px; transition: 0.3s; font-size: 1rem; }
         .custom-tools-wrapper a:hover { background: var(--primary); color: white; }
@@ -178,7 +178,7 @@
         .hover-tooltip { background: rgba(15, 23, 42, 0.9); color: white; border: 1px solid var(--accent); border-radius: 5px; font-weight: bold; box-shadow: none; padding: 4px 8px; font-size: 0.8rem;}
         .leaflet-tooltip-top:before, .leaflet-tooltip-bottom:before, .leaflet-tooltip-left:before, .leaflet-tooltip-right:before { border: none !important; }
 
-        /* Geoman Tweaks */
+        /* Geoman Tweaks (Native Leaflet Controls) */
         .leaflet-pm-toolbar .button-container a { background-color: #1e293b !important; color: white !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 8px !important; margin-bottom: 2px;}
         .leaflet-pm-toolbar .button-container a:hover { background-color: var(--accent) !important; }
     </style>
@@ -194,8 +194,9 @@
         </button>
     </div>
 
-    <!-- AUTHENTICATION -->
+    <!-- AUTHENTICATION (SIMULASI DATABASE LOKAL) -->
     <div id="auth-overlay">
+        <!-- Form Login -->
         <div class="auth-card auth-form active" id="form-login">
             <button class="btn-close-auth" onclick="tutupLogin()"><i class="fas fa-times"></i></button>
             <div class="login-brand" style="margin-bottom:20px; font-weight:800; color:var(--accent);"><i class="fas fa-shield-halved"></i> PORTAL MASUK</div>
@@ -214,6 +215,7 @@
             </form>
         </div>
 
+        <!-- Form Register -->
         <div class="auth-card auth-form" id="form-register">
             <button class="btn-close-auth" onclick="tutupLogin()"><i class="fas fa-times"></i></button>
             <div class="login-brand" style="margin-bottom:5px; font-weight:800; color:var(--primary);"><i class="fas fa-user-plus"></i> BUAT AKUN ADMIN</div>
@@ -235,6 +237,7 @@
 
     <!-- HALAMAN BERANDA -->
     <div id="halaman-beranda" class="page-view active">
+        <!-- Hero -->
         <section class="hero" id="home">
             <h1 style="margin-top: 50px;">Sistem Spasial Polanharjo</h1>
             <p>Portal Informasi Publik dan Data Spasial Interaktif untuk mendukung Rencana Detail Tata Ruang (RDTR) dan tata kelola pertanahan Kecamatan Polanharjo, Klaten.</p>
@@ -258,7 +261,7 @@
                 <div class="stat-card"><i class="fas fa-building-user"></i><h3>9</h3><p>Sarana Ekonomi</p></div>
             </div>
 
-            <!-- Demografi Bar Chart -->
+            <!-- Demografi -->
             <div class="data-wrapper">
                 <div class="data-chart"><h4 style="text-align:center; margin-bottom:15px;">Struktur Usia Penduduk (2024)</h4><canvas id="demoChart" width="400" height="250"></canvas></div>
                 <div class="data-text">
@@ -304,6 +307,14 @@
                 </div>
             </div>
 
+            <!-- VIDEO YOUTUBE YG BALIK LAGI WKWK -->
+            <div style="background:var(--bg-card); padding:40px; border-radius:20px; text-align:center; border: 1px solid rgba(255,255,255,0.05); margin-top: 40px;">
+                <h3 style="color:white; margin-bottom: 10px; font-size: 1.8rem;"><i class="fas fa-video" style="color:var(--accent);"></i> Video Profil Wilayah</h3>
+                <p style="color:#94a3b8; margin-bottom:30px;">Kondisi eksisting lapangan dan pemanfaatan potensi wisata air "Umbul" sebagai roda ekonomi pedesaan.</p>
+                <div style="max-width: 850px; margin: 0 auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); aspect-ratio: 16/9;">
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/qtT3APyW-VA?mute=1" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
         </section>
 
         <!-- TIM PENYUSUN -->
@@ -951,8 +962,9 @@
             }
         }
 
-        // --- 7. LEGENDA KARTOGRAFI (DIPERBAIKI SINKRONISASI WARNANYA KIRI BAWAH) ---
-        var legend = L.control({position: 'bottomleft'});
+        // --- 7. LEGENDA KARTOGRAFI (DIPERBAIKI SINKRONISASI WARNANYA KANAN BAWAH) ---
+        // Pindah kembali ke right (kanan) sesuai request
+        var legend = L.control({position: 'bottomright'});
         legend.onAdd = function() { 
             var div = L.DomUtil.create('div', 'legend-box'); div.id = 'legend'; 
             div.innerHTML = '<div class="legend-title">Legenda WebGIS</div><div id="legend-content"><p style="color:#94a3b8; font-style:italic;">Pilih layer di panel kiri untuk memunculkan legenda.</p></div>'; 
