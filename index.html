@@ -183,7 +183,7 @@
         /* --- KOTAK KOORDINAT --- */
         .coord-display { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-card); padding: 10px 25px; border-radius: 50px; border: 2px solid var(--primary); color: #cbd5e1; font-size: 0.95rem; font-weight: bold; z-index: 1000; pointer-events: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;}
 
-        /* --- LEGENDA (MURNI LEAFLET KANAN BAWAH) --- */
+        /* --- LEGENDA --- */
         .legend-box { background: var(--glass); border-radius: 15px; padding: 18px; border: 1px solid rgba(255,255,255,0.1); width: 250px; color: white; font-size: 0.9rem; max-height: 400px; overflow-y: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 10px; margin-right: 10px; pointer-events: auto; }
         .legend-title { font-size: 0.95rem; color: var(--accent); margin-bottom: 12px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .legend-color { width: 14px; height: 14px; border-radius: 3px; display: inline-block; margin-right: 8px; border: 1px solid rgba(255,255,255,0.2); }
@@ -192,7 +192,7 @@
         .legend-item { display: flex; align-items: center; margin-bottom: 6px; font-size: 0.85rem; }
         .legend-line { width: 16px; height: 3px; display: inline-block; margin-right: 8px; }
 
-        /* --- MAP CONTROLS KANAN BAWAH (HORIZONTAL) --- */
+        /* --- MAP CONTROLS KANAN BAWAH --- */
         .custom-tools-wrapper { background: var(--glass); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); display: flex; flex-direction: row; gap: 5px; padding: 5px; box-shadow: 0 8px 15px rgba(0,0,0,0.4); margin-bottom: 20px; margin-right: 10px; pointer-events: auto; }
         .custom-tools-wrapper a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; color: white; text-decoration: none; background: #1e293b; border-radius: 8px; transition: 0.3s; font-size: 1rem; }
         .custom-tools-wrapper a:hover { background: var(--primary); color: white; }
@@ -214,7 +214,6 @@
         .tool-btn { width: 40px; height: 40px; border-radius: 10px; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; position: relative; }
         .tool-btn:hover, .tool-btn.active { background: var(--accent); color: white; border-color: var(--accent); transform: scale(1.05); }
         
-        /* Tooltip bhumi tools */
         .tool-btn::after { content: attr(data-title); position: absolute; right: 55px; background: rgba(15,23,42,0.9); padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: 0.3s; border: 1px solid var(--accent); font-weight: bold;}
         .tool-btn:hover::after { opacity: 1; }
     </style>
@@ -604,8 +603,15 @@
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-pass').value;
+
+            // --- SUPER ADMIN HARDCODED (Bisa diakses di semua device) ---
+            if (email === "superadmin@polan.id" && pass === "polan2026") {
+                loginSukses("admin");
+                return;
+            }
+
+            // --- ADMIN BIASA (Dari LocalStorage) ---
             const savedPass = localStorage.getItem('user_' + email);
-            
             if (savedPass === pass) {
                 loginSukses("admin");
             } else {
@@ -767,7 +773,6 @@
             setTimeout(() => { map.invalidateSize(); }, 100);
             window.scrollTo(0,0);
             
-            // Auto pause youtube saat buka peta
             if(ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
                 ytPlayer.pauseVideo();
             }
@@ -780,7 +785,6 @@
             document.body.style.overflow = "auto";
             window.scrollTo(0,0);
             
-            // Auto play youtube saat balik ke beranda
             if(ytPlayer && typeof ytPlayer.playVideo === 'function') {
                 ytPlayer.playVideo();
             }
@@ -915,7 +919,7 @@
             }
         }
 
-        // --- FITUR QUERY (TEKNIK BRUTE-FORCE ANTI GAGAL) ---
+        // --- FITUR QUERY BRUTE-FORCE (PILIH SALAH SATU AJA) ---
         function terapkanFilter() {
             let hakFilter = document.getElementById('filter-hak').value.toLowerCase();
             let gunaFilter = document.getElementById('filter-guna').value.toLowerCase();
@@ -928,7 +932,6 @@
             let matchCount = 0;
             let bounds = L.latLngBounds();
 
-            // 1. FILTER STATUS HAK (Cari di Layer Persil)
             if (hakFilter !== "") {
                 if(!layers['persil']) {
                     showToast("Sabar, lagi buka data Persil Tanah...");
@@ -952,15 +955,16 @@
                         matchCount++;
                         bounds.extend(layer.getBounds());
                     } else {
-                        layer.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 }); // Hide
+                        layer.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 }); // Hide layer
                     }
                 });
-            } else if (layers['persil']) {
-                layers['persil'].eachLayer(l => layers['persil'].resetStyle(l));
-            }
 
-            // 2. FILTER GUNA LAHAN (Cari di Layer PL)
-            if (gunaFilter !== "") {
+                if (layers['pl'] && map.hasLayer(layers['pl'])) {
+                    layers['pl'].eachLayer(l => layers['pl'].resetStyle(l));
+                }
+            } 
+            
+            else if (gunaFilter !== "") {
                 if(!layers['pl']) {
                     showToast("Sabar, lagi buka data Penggunaan Lahan...");
                     toggleGeoJsonLayer('pl', 'pl_polan.geojson');
@@ -983,14 +987,15 @@
                         matchCount++;
                         bounds.extend(layer.getBounds());
                     } else {
-                        layer.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 }); // Hide
+                        layer.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 }); // Hide layer
                     }
                 });
-            } else if (layers['pl']) {
-                layers['pl'].eachLayer(l => layers['pl'].resetStyle(l));
+
+                if (layers['persil'] && map.hasLayer(layers['persil'])) {
+                    layers['persil'].eachLayer(l => layers['persil'].resetStyle(l));
+                }
             }
 
-            // Fit Bounds
             if(matchCount > 0) {
                 map.fitBounds(bounds);
                 showToast(`Mantap! Ketemu ${matchCount} bidang tanah.`);
