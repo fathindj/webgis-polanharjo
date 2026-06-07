@@ -377,7 +377,7 @@
                 <h3 style="color:white; margin-bottom: 10px; font-size: 1.8rem;"><i class="fas fa-video" style="color:var(--accent);"></i> Video Profil Wilayah</h3>
                 <p style="color:#94a3b8; margin-bottom:30px;">Kondisi eksisting lapangan dan pemanfaatan potensi wisata air "Umbul" sebagai roda ekonomi pedesaan.</p>
                 <div style="max-width: 850px; margin: 0 auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); aspect-ratio: 16/9; position: relative;">
-                    <iframe id="yt-player" src="https://www.youtube.com/embed/qtT3APyW-VA?enablejsapi=1&rel=0&playsinline=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top:0; left:0; width:100%; height:100%;"></iframe>
+                    <div id="yt-player" style="position: absolute; top:0; left:0; width:100%; height:100%;"></div>
                 </div>
             </div>
         </section>
@@ -550,7 +550,7 @@
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 4000);
         }
 
-        // --- INIT YOUTUBE API SECARA DINAMIS (Diperbaiki) ---
+        // --- INIT YOUTUBE API SECARA DINAMIS ---
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -559,6 +559,8 @@
         var ytPlayer;
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('yt-player', {
+                videoId: 'qtT3APyW-VA', // Masukkan ID Video YouTube di sini
+                playerVars: { 'playsinline': 1, 'rel': 0, 'enablejsapi': 1 },
                 events: {
                     'onReady': function(event) {
                         event.target.setVolume(50);
@@ -664,7 +666,8 @@
                 updateLoginButtonUI();
                 terapkanAturanHakAkses();
                 
-                if(ytPlayer && typeof ytPlayer.playVideo === 'function') {
+                // AUTO PLAY VIDEO SETELAH LOGIN (Berjalan jika user di halaman beranda)
+                if(ytPlayer && typeof ytPlayer.playVideo === 'function' && document.getElementById('halaman-beranda').classList.contains('active')) {
                     ytPlayer.playVideo();
                 }
 
@@ -892,7 +895,7 @@
             chartsRendered = true;
         }
 
-        // --- NAVIGASI HALAMAN ---
+        // --- NAVIGASI HALAMAN (PAUSE VIDEO SAAT BUKA PETA) ---
         function bukaPeta() {
             document.getElementById('halaman-beranda').classList.remove('active');
             document.getElementById('halaman-peta').classList.add('active');
@@ -901,6 +904,7 @@
             setTimeout(() => { map.invalidateSize(); }, 100);
             window.scrollTo(0,0);
             
+            // Video Otomatis Berhenti saat layar WebGIS terbuka
             if(ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
                 ytPlayer.pauseVideo();
             }
@@ -913,7 +917,8 @@
             document.body.style.overflow = "auto";
             window.scrollTo(0,0);
             
-            if(ytPlayer && typeof ytPlayer.playVideo === 'function') {
+            // Opsional: Lanjut putar lagi pas balik beranda
+            if(ytPlayer && typeof ytPlayer.playVideo === 'function' && sessionStorage.getItem("isLoggedIn") === "true") {
                 ytPlayer.playVideo();
             }
         }
@@ -1026,7 +1031,7 @@
                                     return { color: "#16a34a", weight: 2, fillColor: "#22c55e", fillOpacity: 0.4, dashArray: "4, 4" };
                                 }
                                 if (key === 'jalan') {
-                                    return { color: "#ef4444", weight: 4, opacity: 0.8 };
+                                    return { color: "#ef4444", weight: 4, opacity: 1, fillOpacity: 0 }; // FIX: Jalan tidak boleh ter-fill opacity supaya jelas
                                 }
                                 if (key === 'pl') return { color: "#ffffff", weight: 0.8, fillColor: getWarna('pl', p.jenis || p.JENIS || p.Jenis), fillOpacity: 0.65 };
                                 if (key === 'persil') return { color: "#475569", weight: 0.5, fillColor: getWarna('persil', p.status || p.STATUS || p.Status), fillOpacity: 0.6 };
@@ -1038,6 +1043,13 @@
                                     let quickInfo = f.properties.jenis || f.properties.JENIS || f.properties.status || f.properties.STATUS || f.properties.Nama || "Area Bidang";
                                     l.bindTooltip(quickInfo, {sticky: true, className: 'hover-tooltip'});
                                     
+                                    // FIX: Pastikan garis jalan selalu berada di atas poligon agar tidak tertutup
+                                    if (f.geometry.type.includes('LineString') || key === 'jalan') {
+                                        setTimeout(() => {
+                                            if (map.hasLayer(l) && l.bringToFront) l.bringToFront();
+                                        }, 100);
+                                    }
+
                                     if(f.geometry.type.includes('Polygon')) {
                                         l.on({
                                             mouseover: function(e) { e.target.setStyle({ weight: 3, color: '#f59e0b', fillOpacity: 0.8 }); if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) e.target.bringToFront(); },
@@ -1180,8 +1192,13 @@
                 
                 if(routingControl) map.removeControl(routingControl);
                 
+                // Menggunakan OSRM public router agar berfungsi mirip Google Maps
                 routingControl = L.Routing.control({
                     waypoints: [],
+                    router: L.Routing.osrmv1({
+                        language: 'id',
+                        profile: 'car'
+                    }),
                     routeWhileDragging: false,
                     addWaypoints: false,
                     fitSelectedRoutes: true,
