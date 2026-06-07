@@ -13,7 +13,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
-    <!-- Turf.js for Buffering -->
+    <!-- Turf.js for Buffering & Area Calculation -->
     <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
     <!-- Leaflet Routing Machine -->
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
@@ -30,6 +30,7 @@
         }
         
         body { background-color: var(--bg-dark); color: var(--text); overflow-x: hidden; }
+        body.locked { overflow: hidden; }
         .page-view { display: none; width: 100%; }
         .page-view.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -226,14 +227,15 @@
         .tool-btn:hover::after { opacity: 1; }
     </style>
 </head>
-<body>
+<body class="locked">
 
-    <!-- Toast Info Rute Khusus -->
+    <!-- Toast Info Rute -->
     <div id="route-toast"><i class="fas fa-route"></i> Jarak Rute: <span id="route-dist">0</span></div>
 
     <div id="toast"><i class="fas fa-check-circle" style="color:#10b981; margin-right:8px;"></i> <span id="toast-msg">Notifikasi</span></div>
 
     <div class="top-nav" id="top-nav">
+        <!-- Tombol Akses -->
         <button onclick="bukaLogin()" class="btn-top-login" id="btn-top-login">
             <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i> 
             <span id="text-top-login">LOGIN SISTEM</span>
@@ -472,7 +474,7 @@
                 </div>
                 <!-- LAYER JALAN BARU -->
                 <div class="layer-item" id="item-jalan">
-                    <div class="layer-header" onclick="toggleGeoJsonLayer('jalan', 'jalan_polan.geojson')"><span style="flex:1;">Jaringan Jalan</span><div class="status-dot"></div></div>
+                    <div class="layer-header" onclick="toggleGeoJsonLayer('jalan', 'Jalan.geojson')"><span style="flex:1;">Jaringan Jalan</span><div class="status-dot"></div></div>
                     <div class="layer-controls"><div class="slider-row"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('jalan', this.value)"></div></div>
                 </div>
                 
@@ -567,6 +569,7 @@
         let userRole = sessionStorage.getItem("userRole") || null; 
         document.addEventListener("DOMContentLoaded", () => {
             initVisitorCount(); 
+            document.body.classList.remove("locked");
             initChart(); 
             
             if (sessionStorage.getItem("isLoggedIn") === "true") {
@@ -628,14 +631,14 @@
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-pass').value;
 
-            // --- SUPER ADMIN HARDCODED (Bisa diakses di semua device tanpa daftar) ---
+            // --- SUPER ADMIN HARDCODED ---
             if (email === "superadmin@polan.id" && pass === "polan2026") {
                 sessionStorage.setItem("userEmail", email);
                 loginSukses("admin");
                 return;
             }
 
-            // --- ADMIN BIASA (Harus daftar dulu, kesimpen di LocalStorage) ---
+            // --- ADMIN BIASA ---
             const savedPass = localStorage.getItem('user_' + email);
             if (savedPass && savedPass === pass) {
                 sessionStorage.setItem("userEmail", email);
@@ -750,16 +753,61 @@
         }
 
         let digitCounter = 1;
+        
+        // REVISI: Input Atribut Dinamis Saat Digitasi Selesai
         map.on('pm:create', (e) => {
+            if(userRole === 'guest') return; 
+            
             const layer = e.layer;
             const id = 'digit_' + Date.now();
-            const name = 'Hasil Digitasi ' + digitCounter++;
             
+            // Tanya user
+            let namaPemilik = prompt("Masukkan Nama Pemilik / Keterangan Bidang:", "Anonim");
+            if (namaPemilik === null) {
+                map.removeLayer(layer);
+                showToast("Digitasi dibatalkan.");
+                return; 
+            }
+            let gunaLahan = prompt("Masukkan Penggunaan Lahan (Contoh: Sawah / Permukiman):", "Lahan Kosong");
+            if (gunaLahan === null) gunaLahan = "Lahan Kosong";
+            
+            // Hitung Luas Otomatis pake Turf.js
+            let luasArea = 0;
+            if (e.shape === 'Polygon' || e.shape === 'Rectangle') {
+                let geojson = layer.toGeoJSON();
+                luasArea = turf.area(geojson); 
+            }
+
+            // Set Data Properties
+            let props = {
+                "Nama": namaPemilik,
+                "Penggunaan": gunaLahan,
+                "Luas Area": (luasArea > 0) ? luasArea.toFixed(2) + " m²" : "-"
+            };
+            
+            layer.feature = layer.feature || {};
+            layer.feature.type = "Feature";
+            layer.feature.properties = props;
+
             layer.setStyle({ color: '#ec4899', weight: 2, fillColor: '#f472b6', fillOpacity: 0.5 });
+            layer.bindPopup(buildPopupHTML(props));
+            
+            const name = 'Hasil Digitasi ' + digitCounter++;
             layers[id] = layer; layer.options.id = id;
             
             buatMenuDiSidebar(id, name, layer);
-            showToast(name + " ditambahkan ke Panel Kiri.");
+            showToast(name + " berhasil diinput ke database lokal.");
+            
+            // REVISI: Update Luas Otomatis kalau bentuknya diedit
+            layer.on('pm:update', (event) => {
+                let l = event.layer;
+                if (l.toGeoJSON().geometry.type.includes('Polygon')) {
+                    let newArea = turf.area(l.toGeoJSON());
+                    l.feature.properties["Luas Area"] = newArea.toFixed(2) + " m²";
+                    l.bindPopup(buildPopupHTML(l.feature.properties));
+                    showToast("Bentuk diubah, luas lahan otomatis diperbarui!");
+                }
+            });
         });
 
         // --- 2. RENDER CHART.JS ---
@@ -862,8 +910,8 @@
         function getWarna(key, val) {
             let v = String(val || "").toLowerCase();
             
-            if(key === 'kp2b') return '#16a34a'; 
-            if(key === 'jalan') return '#ef4444'; 
+            if(key === 'kp2b') { return '#16a34a'; }
+            if(key === 'jalan') { return '#ef4444'; }
 
             if(key === 'pl') {
                 if(v.includes('sawah') || v.includes('tani')) return '#10b981'; 
@@ -945,7 +993,7 @@
                                     let quickInfo = f.properties.jenis || f.properties.JENIS || f.properties.status || f.properties.STATUS || f.properties.Nama || "Area Bidang";
                                     l.bindTooltip(quickInfo, {sticky: true, className: 'hover-tooltip'});
                                     
-                                    if(f.geometry.type.includes('Polygon')) {
+                                    if(f.geometry && f.geometry.type && f.geometry.type.includes('Polygon')) {
                                         l.on({
                                             mouseover: function(e) { e.target.setStyle({ weight: 3, color: '#f59e0b', fillOpacity: 0.8 }); if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) e.target.bringToFront(); },
                                             mouseout: function(e) { layers[key].resetStyle(e.target); }
@@ -974,7 +1022,6 @@
             }
         }
 
-        // --- REVISI: FITUR QUERY MULTI-CRITERIA (OVERLAY SPASIAL) ---
         function terapkanFilter() {
             let hakFilter = document.getElementById('filter-hak').value.toLowerCase();
             let gunaFilter = document.getElementById('filter-guna').value.toLowerCase();
@@ -1072,7 +1119,7 @@
             showToast("Filter geospasial telah di-reset.");
         }
 
-        // --- REVISI: ANALISIS GEOSPASIAL (ROUTING & BUFFER) ---
+        // --- ANALISIS GEOSPASIAL (ROUTING & BUFFER) ---
         let routingControl = null;
         let isRoutingMode = false;
         
@@ -1172,7 +1219,7 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
-        // --- REVISI: INTEGRASI UPLOAD & VERIFIKASI SUPER ADMIN ---
+        // --- INTEGRASI UPLOAD & VERIFIKASI SUPER ADMIN ---
         function handleFileUpload(event) {
             const file = event.target.files[0]; if (!file) return;
             const ext = file.name.split('.').pop().toLowerCase();
@@ -1208,6 +1255,7 @@
             event.target.value = ''; 
         }
 
+        // --- REVISI: EDIT ATRIBUT TABEL DINAMIS ---
         function buatMenuDiSidebar(id, name, layer) {
             let c = document.getElementById('user-layers-container');
             if(c.innerHTML === "") c.innerHTML = '<div class="sidebar-section-title" style="margin-top: 25px;"><i class="fas fa-folder-open"></i> Data Unggahan & Digitasi</div>';
@@ -1218,7 +1266,8 @@
                         <span style="flex:1; overflow:hidden; text-overflow:ellipsis; font-size:0.85rem; cursor:pointer;" onclick="toggleMarkerLayer('${id}')">${name}</span>
                         
                         <div style="display:flex; gap:8px;">
-                            <i class="fas fa-pen-to-square" style="color:var(--primary); cursor:pointer;" onclick="editLayer('${id}')" title="Edit Bidang"></i>
+                            <i class="fas fa-table-list" style="color:#f59e0b; cursor:pointer;" onclick="editAtribut('${id}')" title="Edit Atribut Data"></i>
+                            <i class="fas fa-pen-to-square" style="color:var(--primary); cursor:pointer;" onclick="editLayer('${id}')" title="Edit Bentuk Bidang"></i>
                             <i class="fas fa-cloud-arrow-down" style="color:#10b981; cursor:pointer;" onclick="downloadDigit('${id}', '${name}')" title="Unduh GeoJSON"></i>
                             <i class="fas fa-trash" style="color:#ef4444; cursor:pointer;" onclick="hapusDigit('${id}')" title="Hapus"></i>
                         </div>
@@ -1238,6 +1287,30 @@
                 if(item) item.remove();
                 delete layers[id];
             });
+        }
+
+        function editAtribut(id) {
+            if(layers[id]) {
+                let layer = layers[id];
+                let props = layer.feature.properties || {};
+                
+                let currentNama = props["Nama"] || "Anonim";
+                let currentGuna = props["Penggunaan"] || "Lahan Kosong";
+                
+                let newNama = prompt("Edit Nama Pemilik / Keterangan Bidang:", currentNama);
+                if (newNama === null) return; 
+                
+                let newGuna = prompt("Edit Penggunaan Lahan (Contoh: Sawah/Permukiman):", currentGuna);
+                if (newGuna === null) return; 
+
+                props["Nama"] = newNama;
+                props["Penggunaan"] = newGuna;
+
+                layer.feature.properties = props;
+                layer.bindPopup(buildPopupHTML(props));
+                
+                showToast("Mantap! Atribut tabel berhasil dirombak.");
+            }
         }
 
         function editLayer(id) {
