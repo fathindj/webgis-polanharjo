@@ -14,13 +14,12 @@
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
     <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
 
     <style>
         :root { --bg-dark: #0f172a; --bg-card: #1e293b; --glass: rgba(15, 23, 42, 0.95); --accent: #f59e0b; --primary: #3b82f6; --text: #f8fafc; --transition: all 0.3s ease; }
         * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
         
-        /* --- FONT TIMES NEW ROMAN (ANTI BIKINAN AI) --- */
+        /* --- FONT TIMES NEW ROMAN --- */
         body, button, input, select, textarea, table, th, td, a, p, h1, h2, h3, h4, h5, h6 { 
             font-family: 'Times New Roman', Times, serif !important; 
         }
@@ -378,7 +377,7 @@
                 <h3 style="color:white; margin-bottom: 10px; font-size: 1.8rem;"><i class="fas fa-video" style="color:var(--accent);"></i> Video Profil Wilayah</h3>
                 <p style="color:#94a3b8; margin-bottom:30px;">Kondisi eksisting lapangan dan pemanfaatan potensi wisata air "Umbul" sebagai roda ekonomi pedesaan.</p>
                 <div style="max-width: 850px; margin: 0 auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); aspect-ratio: 16/9; position: relative;">
-                    <div id="yt-player" style="position: absolute; top:0; left:0; width:100%; height:100%;"></div>
+                    <iframe id="yt-player" src="https://www.youtube.com/embed/qtT3APyW-VA?enablejsapi=1&rel=0&playsinline=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position: absolute; top:0; left:0; width:100%; height:100%;"></iframe>
                 </div>
             </div>
         </section>
@@ -551,16 +550,15 @@
             setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 4000);
         }
 
-        // --- INIT YOUTUBE API ---
+        // --- INIT YOUTUBE API SECARA DINAMIS (Diperbaiki) ---
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
         var ytPlayer;
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('yt-player', {
-                videoId: 'qtT3APyW-VA',
-                playerVars: { 
-                    'playsinline': 1, 
-                    'rel': 0,
-                    'controls': 1
-                },
                 events: {
                     'onReady': function(event) {
                         event.target.setVolume(50);
@@ -754,7 +752,7 @@
             else showToast("Mode hapus dimatikan.");
         }
 
-        // --- SISTEM PANEL ATRIBUT DINAMIS (PENGGANTI PROMPT) ---
+        // --- SISTEM PANEL ATRIBUT DINAMIS ---
         let currentEditLayerId = null;
         let isNewFeature = false;
         let digitCounter = 1;
@@ -772,7 +770,6 @@
                 luasArea = turf.area(layer.toGeoJSON());
             }
 
-            // Tampilkan Modal HTML (Bukan Prompt lagi)
             bukaModalAtribut(id, true, luasArea);
         });
 
@@ -788,7 +785,7 @@
             if(isNew) {
                 inputNama.value = "";
                 inputGuna.value = "Sawah";
-                inputLuas.value = (luasArea > 0) ? luasArea.toFixed(2) + " m²" : "-";
+                inputLuas.value = (luasArea > 0) ? luasArea.toFixed(2).replace('.', ',') + " m²" : "-";
             } else {
                 let p = layers[id].feature.properties;
                 inputNama.value = p["Nama"] || "";
@@ -805,7 +802,6 @@
             modal.classList.remove('active');
             setTimeout(() => { modal.style.display = 'none'; }, 300);
 
-            // Kalau lagi bikin baru tapi di-cancel, hapus coretannya
             if(isNewFeature && currentEditLayerId && layers[currentEditLayerId]) {
                 map.removeLayer(layers[currentEditLayerId]);
                 delete layers[currentEditLayerId];
@@ -842,7 +838,7 @@
                     let l = event.layer;
                     if (l.toGeoJSON().geometry.type.includes('Polygon')) {
                         let newArea = turf.area(l.toGeoJSON());
-                        l.feature.properties["Luas Area"] = newArea.toFixed(2) + " m²";
+                        l.feature.properties["Luas Area"] = newArea.toFixed(2).replace('.', ',') + " m²";
                         l.bindPopup(buildPopupHTML(l.feature.properties));
                         showToast("Bentuk diubah, luas lahan otomatis diperbarui!");
                     }
@@ -852,7 +848,6 @@
                 showToast("Atribut tabel berhasil diperbarui!");
             }
 
-            // Tutup Modal
             let modal = document.getElementById('atribut-modal');
             modal.classList.remove('active');
             setTimeout(() => { modal.style.display = 'none'; }, 300);
@@ -861,7 +856,7 @@
             isNewFeature = false;
         }
 
-        // --- 2. RENDER CHART.JS ---
+        // --- RENDER CHART.JS ---
         let chartsRendered = false;
         function initChart() {
             if(chartsRendered) return; 
@@ -897,7 +892,7 @@
             chartsRendered = true;
         }
 
-        // --- 3. NAVIGASI HALAMAN (PAUSE/PLAY YOUTUBE) ---
+        // --- NAVIGASI HALAMAN ---
         function bukaPeta() {
             document.getElementById('halaman-beranda').classList.remove('active');
             document.getElementById('halaman-peta').classList.add('active');
@@ -925,7 +920,7 @@
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
 
-        // --- 4. MAPS BASEMAPS ---
+        // --- MAPS BASEMAPS ---
         var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
         var googleMaps = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains:['mt0','mt1','mt2','mt3'] });
         var osm = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png');
@@ -936,7 +931,7 @@
             document.getElementById('coord-display').innerHTML = `<i class="fas fa-location-dot" style="color:var(--accent);"></i> KOORDINAT: ${e.latlng.lat.toFixed(5)} , ${e.latlng.lng.toFixed(5)} <span style="color:#94a3b8; font-weight:normal; margin-left:5px;">(WGS 84 / EPSG:4326)</span>`;
         });
 
-        // --- 5. LAYER LOGIC (DATA BAWAAN) ---
+        // --- LAYER LOGIC ---
         const layers = {};
         
         let popupCamat = `
@@ -1000,7 +995,7 @@
                     if (displayKey.includes('Luas') || displayKey.includes('Area')) {
                         let parsedVal = parseFloat(String(val).replace(/,/g, '.'));
                         if (!isNaN(parsedVal)) {
-                            val = parsedVal.toFixed(3) + " m²";
+                            val = parsedVal.toFixed(3).replace('.', ',') + " m²";
                         } else {
                             if (!String(val).toLowerCase().includes('m2') && !String(val).toLowerCase().includes('ha')) val += " m²";
                         }
@@ -1199,7 +1194,7 @@
                 routingControl.on('routesfound', function(e) {
                     var routes = e.routes;
                     var summary = routes[0].summary;
-                    document.getElementById('route-dist').innerText = (summary.totalDistance / 1000).toFixed(2) + " KM";
+                    document.getElementById('route-dist').innerText = (summary.totalDistance / 1000).toFixed(2).replace('.', ',') + " KM";
                 });
 
                 map.on('click', onMapClickRouting);
@@ -1270,7 +1265,7 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
-        // --- INTEGRASI UPLOAD & VERIFIKASI SUPER ADMIN ---
+        // --- INTEGRASI UPLOAD ---
         function handleFileUpload(event) {
             const file = event.target.files[0]; if (!file) return;
             const ext = file.name.split('.').pop().toLowerCase();
@@ -1346,7 +1341,6 @@
             }
         }
 
-        // Update Edit Shape - Supaya Tooltip gak nabrak
         function editLayer(id) {
             if(layers[id]) {
                 if(!isModeDigitasi) {
@@ -1389,7 +1383,7 @@
             }
         }
 
-        // --- 7. LEGENDA KARTOGRAFI ---
+        // --- LEGENDA KARTOGRAFI ---
         var legend = L.control({position: 'bottomright'});
         legend.onAdd = function() { 
             var div = L.DomUtil.create('div', 'legend-box'); div.id = 'legend'; 
@@ -1425,7 +1419,7 @@
             content.innerHTML = html;
         }
 
-        // --- 8. MAP CONTROLS HORIZONTAL ---
+        // --- MAP CONTROLS HORIZONTAL ---
         let userMarker = null; let userRadius = null;
         
         map.on('locationfound', function(e) {
