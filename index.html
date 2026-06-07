@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GEOPOLAN | Portal Informasi & GIS Desa Polan</title>
 
+    <!-- Leaflet & Plugins -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
@@ -12,8 +13,11 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
+    <!-- Turf.js for Buffering -->
     <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+    <!-- Leaflet Routing Machine -->
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <!-- YOUTUBE API -->
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <style>
@@ -26,7 +30,6 @@
         }
         
         body { background-color: var(--bg-dark); color: var(--text); overflow-x: hidden; }
-        body.locked { overflow: hidden; }
         .page-view { display: none; width: 100%; }
         .page-view.active { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -223,8 +226,9 @@
         .tool-btn:hover::after { opacity: 1; }
     </style>
 </head>
-<body class="locked">
+<body>
 
+    <!-- Toast Info Rute Khusus -->
     <div id="route-toast"><i class="fas fa-route"></i> Jarak Rute: <span id="route-dist">0</span></div>
 
     <div id="toast"><i class="fas fa-check-circle" style="color:#10b981; margin-right:8px;"></i> <span id="toast-msg">Notifikasi</span></div>
@@ -236,7 +240,9 @@
         </button>
     </div>
 
-    <div id="auth-overlay">
+    <!-- AUTHENTICATION (Ditambahkan style default supaya tidak nampil terus) -->
+    <div id="auth-overlay" style="display: none; opacity: 0;">
+        <!-- Form Login -->
         <div class="auth-card auth-form active" id="form-login">
             <button class="btn-close-auth" onclick="tutupLogin()"><i class="fas fa-times"></i></button>
             <div class="login-brand" style="margin-bottom:20px; font-weight:bold; font-size:1.2rem; color:var(--accent);"><i class="fas fa-shield-halved"></i> PORTAL MASUK</div>
@@ -255,6 +261,7 @@
             </form>
         </div>
 
+        <!-- Form Register -->
         <div class="auth-card auth-form" id="form-register">
             <button class="btn-close-auth" onclick="tutupLogin()"><i class="fas fa-times"></i></button>
             <div class="login-brand" style="margin-bottom:5px; font-weight:bold; font-size:1.2rem; color:var(--primary);"><i class="fas fa-user-plus"></i> BUAT AKUN ADMIN</div>
@@ -274,7 +281,9 @@
         </div>
     </div>
 
+    <!-- HALAMAN BERANDA -->
     <div id="halaman-beranda" class="page-view active">
+        <!-- Hero -->
         <section class="hero" id="home">
             <h1 style="margin-top: 50px;">GEOPOLAN</h1>
             <p>Portal Informasi Publik dan Data Spasial Interaktif untuk mendukung Rencana Detail Tata Ruang (RDTR) dan tata kelola pertanahan Desa Polan, Klaten.</p>
@@ -284,6 +293,7 @@
             </div>
         </section>
 
+        <!-- DATA SEKTORAL -->
         <section class="section-container" id="data-interaktif">
             <div class="section-title">
                 <h2>Analisis <span>Sektoral Wilayah</span></h2>
@@ -297,6 +307,7 @@
                 <div class="stat-card"><i class="fas fa-building-user"></i><h3>9</h3><p>Sarana Ekonomi</p></div>
             </div>
 
+            <!-- Demografi Bar Chart -->
             <div class="data-wrapper">
                 <div class="data-chart"><h4 style="text-align:center; margin-bottom:15px;">Struktur Usia Penduduk (2024)</h4><canvas id="demoChart" width="400" height="250"></canvas></div>
                 <div class="data-text">
@@ -312,6 +323,7 @@
                 </div>
             </div>
 
+            <!-- Pendidikan Pie Chart -->
             <div class="data-wrapper reverse">
                 <div class="data-chart"><h4 style="text-align:center; margin-bottom:15px;">Tingkat Pendidikan Terakhir</h4><canvas id="pendidikanChart" width="400" height="250"></canvas></div>
                 <div class="data-text">
@@ -326,6 +338,7 @@
                 </div>
             </div>
 
+            <!-- Pekerjaan Bar Chart -->
             <div class="data-wrapper">
                 <div class="data-chart"><h4 style="text-align:center; margin-bottom:15px;">Mata Pencaharian Penduduk</h4><canvas id="pekerjaanChart" width="400" height="250"></canvas></div>
                 <div class="data-text">
@@ -340,15 +353,18 @@
                 </div>
             </div>
 
+            <!-- VIDEO YOUTUBE DENGAN AUTOPLAY SETELAH LOGIN -->
             <div style="background:var(--bg-card); padding:40px; border-radius:20px; text-align:center; border: 1px solid rgba(255,255,255,0.05); margin-top: 40px;">
                 <h3 style="color:white; margin-bottom: 10px; font-size: 1.8rem;"><i class="fas fa-video" style="color:var(--accent);"></i> Video Profil Wilayah</h3>
                 <p style="color:#94a3b8; margin-bottom:30px;">Kondisi eksisting lapangan dan pemanfaatan potensi wisata air "Umbul" sebagai roda ekonomi pedesaan.</p>
                 <div style="max-width: 850px; margin: 0 auto; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); aspect-ratio: 16/9; position: relative;">
+                    <!-- Wrapper YouTube API -->
                     <div id="yt-player" style="position: absolute; top:0; left:0; width:100%; height:100%;"></div>
                 </div>
             </div>
         </section>
 
+        <!-- TIM PENYUSUN -->
         <section class="section-container" id="tim-penyusun" style="padding-top: 20px;">
             <div class="section-title">
                 <h2>Tim <span>Studio Poland</span></h2>
@@ -378,17 +394,21 @@
         </footer>
     </div>
 
+    <!-- HALAMAN MAP PETA INTERAKTIF -->
     <div id="halaman-peta" class="page-view">
         <div id="map-container">
+            <!-- Navbar Map -->
             <nav class="gis-nav">
                 <div class="brand"><i class="fas fa-map" style="color:var(--accent);"></i> GEOPOLAN</div>
                 <div class="nav-controls">
                     <button class="nav-btn-panel btn-toggle-sidebar" onclick="toggleSidebar()"><i class="fas fa-layer-group"></i> <span>PANEL DATA</span></button>
+                    <!-- Tombol Aktifkan/Matikan Digitasi -->
                     <button class="nav-btn-panel" id="btn-toggle-digit" onclick="toggleDigitasiTools()" style="color:var(--accent); border-color:var(--accent); display:none;"><i class="fas fa-pen-ruler"></i> <span>MODE DIGITASI</span></button>
                     <button onclick="tutupPeta()" class="nav-btn-back"><i class="fas fa-arrow-left"></i> <span>KEMBALI</span></button>
                 </div>
             </nav>
 
+            <!-- Panel Kiri (Sidebar) -->
             <aside class="sidebar active" id="sidebar">
                 <h3 style="color: var(--accent); margin-bottom: 15px; font-weight: 800;">DATA EXPLORER</h3>
                 
@@ -420,8 +440,10 @@
 
                 <div class="sidebar-section-title"><i class="fas fa-route"></i> Analisis Geospasial</div>
                 <div class="query-box" style="margin-bottom: 15px;">
+                    <!-- Routing -->
                     <button class="analysis-btn" id="btn-routing" onclick="toggleRouting()"><i class="fas fa-route"></i> Hitung Rute (Titik A ke B)</button>
                     
+                    <!-- Buffering -->
                     <div class="buffer-box">
                         <input type="number" id="buffer-dist" class="buffer-input" placeholder="Jarak Buffer (Meter)">
                         <button class="buffer-btn" onclick="buatBuffer()"><i class="fas fa-bullseye"></i> Buat Buffer</button>
@@ -448,11 +470,13 @@
                     <div class="layer-header" onclick="toggleGeoJsonLayer('desa', 'batas_desa_LN.geojson')"><span style="flex:1;">Batas Desa</span><div class="status-dot"></div></div>
                     <div class="layer-controls"><div class="slider-row"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('desa', this.value)"></div></div>
                 </div>
+                <!-- LAYER JALAN BARU -->
                 <div class="layer-item" id="item-jalan">
                     <div class="layer-header" onclick="toggleGeoJsonLayer('jalan', 'jalan_polan.geojson')"><span style="flex:1;">Jaringan Jalan</span><div class="status-dot"></div></div>
                     <div class="layer-controls"><div class="slider-row"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('jalan', this.value)"></div></div>
                 </div>
                 
+                <!-- MARKER KANTOR CAMAT & DESA -->
                 <div class="layer-item" id="item-camat"><div class="layer-header" onclick="toggleMarkerLayer('camat')"><span style="flex:1;">Kantor Camat Polanharjo</span><div class="status-dot"></div></div></div>
                 <div class="layer-item" id="item-kantordesa"><div class="layer-header" onclick="toggleMarkerLayer('kantordesa')"><span style="flex:1;">Kantor Desa Polan</span><div class="status-dot"></div></div></div>
 
@@ -476,10 +500,13 @@
                 <div id="user-layers-container"></div>
             </aside>
 
+            <!-- MAP CONTAINER -->
             <div id="map"></div>
             
+            <!-- KOORDINAT (TENGAH BAWAH) -->
             <div id="coord-display" class="coord-display"><i class="fas fa-location-dot" style="color:var(--accent);"></i> KOORDINAT: - <span>(WGS 84 / EPSG:4326)</span></div>
             
+            <!-- PANEL KANAN (BHUMI ATR/BPN STYLE DIGITASI) -->
             <div class="bhumi-tools hidden" id="bhumi-tools">
                 <button class="tool-btn" data-title="Gambar Poligon" onclick="aktfikanAlat('Polygon')"><i class="fas fa-draw-polygon"></i></button>
                 <button class="tool-btn" data-title="Gambar Garis" onclick="aktfikanAlat('Line')"><i class="fas fa-project-diagram"></i></button>
@@ -491,6 +518,11 @@
 
         </div>
     </div>
+
+    <!-- Scripts Leaflet & Geoman -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
+    <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
 
     <script>
         // Deklarasi Peta Global
@@ -535,16 +567,12 @@
         let userRole = sessionStorage.getItem("userRole") || null; 
         document.addEventListener("DOMContentLoaded", () => {
             initVisitorCount(); 
-            // Langsung buka layar (Akses Publik Default)
-            document.body.classList.remove("locked");
             initChart(); 
             
-            // Cek apakah admin sudah login sebelumnya
             if (sessionStorage.getItem("isLoggedIn") === "true") {
                 updateLoginButtonUI();
                 terapkanAturanHakAkses(); 
             } else {
-                // Set default jadi guest
                 sessionStorage.setItem("userRole", "guest");
                 userRole = "guest";
                 terapkanAturanHakAkses();
@@ -597,7 +625,7 @@
 
         function prosesLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('login-email').value;
+            const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-pass').value;
 
             // --- SUPER ADMIN HARDCODED (Bisa diakses di semua device tanpa daftar) ---
@@ -609,7 +637,7 @@
 
             // --- ADMIN BIASA (Harus daftar dulu, kesimpen di LocalStorage) ---
             const savedPass = localStorage.getItem('user_' + email);
-            if (savedPass === pass) {
+            if (savedPass && savedPass === pass) {
                 sessionStorage.setItem("userEmail", email);
                 loginSukses("admin");
             } else {
@@ -633,7 +661,6 @@
                 updateLoginButtonUI();
                 terapkanAturanHakAkses();
                 
-                // Trigger play youtube jika login (membutuhkan interaksi user)
                 if(ytPlayer && typeof ytPlayer.playVideo === 'function') {
                     ytPlayer.playVideo();
                 }
@@ -836,7 +863,7 @@
             let v = String(val || "").toLowerCase();
             
             if(key === 'kp2b') return '#16a34a'; 
-            if(key === 'jalan') return '#ef4444'; // Merah untuk jalan
+            if(key === 'jalan') return '#ef4444'; 
 
             if(key === 'pl') {
                 if(v.includes('sawah') || v.includes('tani')) return '#10b981'; 
@@ -858,7 +885,6 @@
             return "#3b82f6";
         }
 
-        // --- REVISI: POPUP NAMA JELAS & 3 ANGKA DI BELAKANG KOMA ---
         function buildPopupHTML(props) {
             let content = `<h4 style="color:var(--accent); margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:5px;"><i class="fas fa-circle-info"></i> Info Atribut Spasial</h4><table class="attr-table">`;
             
@@ -868,13 +894,11 @@
                     let displayKey = k;
                     let val = props[k];
 
-                    // Rapihkan Nama Kolom "Luas T" dan "Luas B"
                     if(rawKey === 'luas_t' || rawKey === 'luas t' || rawKey === 'luas tanah') displayKey = 'Luas Tanah';
                     if(rawKey === 'luas_b' || rawKey === 'luas b' || rawKey === 'luas bangunan') displayKey = 'Luas Bangunan';
                     if(rawKey === 'luas') displayKey = 'Luas Area';
                     if(rawKey === 'jenis' || rawKey === 'penggunaan') displayKey = 'Penggunaan Lahan';
 
-                    // Format angka 3 desimal & tambah satuan m2 (karena ini skala detail desa)
                     if (displayKey.includes('Luas') || displayKey.includes('Area')) {
                         let parsedVal = parseFloat(String(val).replace(/,/g, '.'));
                         if (!isNaN(parsedVal)) {
@@ -884,7 +908,6 @@
                         }
                     }
 
-                    // Tampilkan di tabel
                     content += `<tr><th>${displayKey}</th><td>${val}</td></tr>`; 
                 }
             }
@@ -922,7 +945,6 @@
                                     let quickInfo = f.properties.jenis || f.properties.JENIS || f.properties.status || f.properties.STATUS || f.properties.Nama || "Area Bidang";
                                     l.bindTooltip(quickInfo, {sticky: true, className: 'hover-tooltip'});
                                     
-                                    // Highlight on hover (hanya untuk Polygon)
                                     if(f.geometry.type.includes('Polygon')) {
                                         l.on({
                                             mouseover: function(e) { e.target.setStyle({ weight: 3, color: '#f59e0b', fillOpacity: 0.8 }); if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) e.target.bringToFront(); },
@@ -964,7 +986,6 @@
                 return;
             }
 
-            // Pastikan layer yang dibutuhkan terbuka
             if(!layers['persil'] && hakFilter !== "") {
                 toggleGeoJsonLayer('persil', 'persil_polan.geojson');
                 setTimeout(terapkanFilter, 1000); return;
@@ -977,13 +998,11 @@
             let matchCount = 0;
             let bounds = L.latLngBounds();
 
-            // Saring LAYER PERSIL (Hak & Luas)
             if (layers['persil']) {
                 layers['persil'].eachLayer(function(layer) {
                     let p = layer.feature.properties;
                     let valHak = String(p.status || p.STATUS || p.Status || Object.values(p).join(" ")).toLowerCase();
                     
-                    // Ambil angka luas tanah
                     let valLuasStr = String(p.luas_t || p.Luas_T || p.Luas || p.LUAS || p.Shape_Area || "0").replace(/,/g, '.');
                     let valLuas = parseFloat(valLuasStr) || 0;
 
@@ -1008,7 +1027,6 @@
                 });
             }
 
-            // Saring LAYER PENGGUNAAN LAHAN (Zona)
             if (layers['pl']) {
                 if (gunaFilter !== "") {
                     layers['pl'].eachLayer(function(layer) {
@@ -1022,7 +1040,7 @@
                         else if (gunaFilter === 'kosong' && valZona.includes('kosong')) cocokGuna = true;
 
                         if (cocokGuna) {
-                            layer.setStyle({ opacity: 1, fillOpacity: 0.8, color: '#10b981', weight: 3 }); // Hijau utk overlay PL
+                            layer.setStyle({ opacity: 1, fillOpacity: 0.8, color: '#10b981', weight: 3 }); 
                             matchCount++;
                             bounds.extend(layer.getBounds());
                         } else {
@@ -1030,7 +1048,7 @@
                         }
                     });
                 } else {
-                    layers['pl'].eachLayer(l => l.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 })); // Sembunyikan kalau gak difilter
+                    layers['pl'].eachLayer(l => l.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 })); 
                 }
             }
 
@@ -1067,7 +1085,6 @@
                 document.getElementById('route-toast').style.display = 'block';
                 showToast("Mode Routing Aktif. Klik 2 Titik di Peta (Awal & Tujuan).");
                 
-                // Hapus rute lama
                 if(routingControl) map.removeControl(routingControl);
                 
                 routingControl = L.Routing.control({
@@ -1075,20 +1092,18 @@
                     routeWhileDragging: false,
                     addWaypoints: false,
                     fitSelectedRoutes: true,
-                    show: false, // Sembunyikan panel bawaan yang jelek
+                    show: false, 
                     createMarker: function(i, wp, nWps) {
                         return L.marker(wp.latLng, { draggable: true, icon: L.divIcon({ className: 'custom-pin', html: (i===0) ? '<i class="fas fa-a" style="color:white; background:#3b82f6; border-radius:50%; padding:8px;"></i>' : '<i class="fas fa-b" style="color:white; background:#ef4444; border-radius:50%; padding:8px;"></i>' }) });
                     }
                 }).addTo(map);
 
-                // Tarik data jarak pas rute ketemu
                 routingControl.on('routesfound', function(e) {
                     var routes = e.routes;
                     var summary = routes[0].summary;
                     document.getElementById('route-dist').innerText = (summary.totalDistance / 1000).toFixed(2) + " KM";
                 });
 
-                // Deteksi klik peta untuk nambah titik
                 map.on('click', onMapClickRouting);
             } else {
                 isRoutingMode = false;
@@ -1111,13 +1126,11 @@
                 wps.push(L.Routing.waypoint(e.latlng));
                 routingControl.setWaypoints(wps);
             } else {
-                // Kalau udah 2 titik, reset mulai dari awal
                 routingControl.setWaypoints([L.Routing.waypoint(e.latlng)]);
                 document.getElementById('route-dist').innerText = "0";
             }
         }
 
-        // Buffer Jalan dengan Turf.js
         function buatBuffer() {
             if(!layers['jalan']) {
                 showToast("Aktifkan 'Jaringan Jalan' di Administrasi dulu ya!");
@@ -1131,13 +1144,11 @@
                 return;
             }
 
-            // Hapus buffer lama kalau ada
             if(layers['buffer_jalan']) {
                 map.removeLayer(layers['buffer_jalan']);
                 delete layers['buffer_jalan'];
             }
 
-            // Pake Turf.js: Ubah satuan meter ke kilometer buat turf
             let distKm = dist / 1000;
             
             try {
@@ -1148,7 +1159,6 @@
                     style: { color: '#ef4444', weight: 1, fillColor: '#fca5a5', fillOpacity: 0.5, dashArray: "5, 5" }
                 }).addTo(map);
 
-                // Tambahkan ke panel biar bisa dihapus
                 buatMenuDiSidebar('buffer_jalan', `Buffer Jalan ${dist}m`, layers['buffer_jalan']);
                 map.fitBounds(layers['buffer_jalan'].getBounds());
                 showToast(`Buffer ${dist} meter berhasil dibuat!`);
@@ -1169,12 +1179,11 @@
             const id = 'upload_' + Date.now();
             const reader = new FileReader();
 
-            // Cek role untuk Verifikasi
             let mail = sessionStorage.getItem("userEmail");
             if (mail !== "superadmin@polan.id") {
                 showToast("Upload berhasil. Menunggu verifikasi Anti-Virus dari Super Admin sebelum ditampilkan di peta.");
                 event.target.value = ''; 
-                return; // Stop disini kalau bukan superadmin
+                return; 
             }
 
             if (ext === 'geojson' || ext === 'json') {
