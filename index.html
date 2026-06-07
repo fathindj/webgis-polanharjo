@@ -367,7 +367,7 @@
                     <button class="btn-dl-item" onclick="downloadData('batas_administrasi.zip')" title="Batas Administrasi ZIP"><i class="fas fa-download"></i> Admin (ZIP)</button>
                     <button class="btn-dl-item" onclick="downloadData('batas_desa_LN.geojson')"><i class="fas fa-download"></i> Batas Desa</button>
                     <button class="btn-dl-item" onclick="downloadData('batas_kecamatan_LN.geojson')"><i class="fas fa-download"></i> Batas Kecamatan</button>
-                    <button class="btn-dl-item" onclick="downloadData('jalan_polan.geojson')"><i class="fas fa-download"></i> Jaringan Jalan</button>
+                    <button class="btn-dl-item" onclick="downloadData('jalan.geojson')"><i class="fas fa-download"></i> Jaringan Jalan</button>
                     <button class="btn-dl-item" onclick="downloadData('KP2B.geojson')"><i class="fas fa-download"></i> Zona KP2B</button>
                     <button class="btn-dl-item" onclick="downloadData('pl_polan.geojson')"><i class="fas fa-download"></i> Guna Lahan</button>
                     <button class="btn-dl-item btn-dl-full" onclick="downloadData('persil_polan.geojson')"><i class="fas fa-download"></i> Persil Tanah / ZNT Polanharjo</button>
@@ -386,7 +386,7 @@
                     <div class="layer-controls"><div class="slider-row"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('desa', this.value)"></div></div>
                 </div>
                 <div class="layer-item" id="item-jalan">
-                    <div class="layer-header" onclick="toggleGeoJsonLayer('jalan', 'jalan_polan.geojson')"><span style="flex:1;">Jaringan Jalan</span><div class="status-dot"></div></div>
+                    <div class="layer-header" onclick="toggleGeoJsonLayer('jalan', 'jalan.geojson')"><span style="flex:1;">Jaringan Jalan</span><div class="status-dot"></div></div>
                     <div class="layer-controls"><div class="slider-row"><label>Opacity</label><input type="range" min="0" max="1" step="0.1" value="1" oninput="changeGeoJsonOpacity('jalan', this.value)"></div></div>
                 </div>
 
@@ -692,7 +692,7 @@
             let btn = document.getElementById('btn-routing');
             if(Object.keys(roadGraph).length === 0) {
                 showToast("Aktifkan layer 'Jaringan Jalan' di menu sebelah kiri terlebih dahulu ya!");
-                toggleGeoJsonLayer('jalan', 'jalan_polan.geojson');
+                toggleGeoJsonLayer('jalan', 'jalan.geojson');
                 return;
             }
 
