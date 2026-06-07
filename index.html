@@ -42,7 +42,7 @@
         #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
         
         /* --- TOAST INFO RUTE --- */
-        #route-toast { display: none; background-color: #10b981; color: white; padding: 15px 25px; border-radius: 12px; position: fixed; z-index: 10000; top: 100px; left: 50%; transform: translateX(-50%); font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid white;}
+        #route-toast { display: none; background-color: #3b82f6; color: white; padding: 15px 25px; border-radius: 50px; position: fixed; z-index: 10000; top: 100px; left: 50%; transform: translateX(-50%); font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid white;}
 
         /* --- SISTEM LOGIN & MODAL ATRIBUT --- */
         #auth-overlay, #atribut-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at center, rgba(30,41,59,0.9) 0%, #0f172a 100%); z-index: 99999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s ease; backdrop-filter: blur(5px); }
@@ -56,7 +56,7 @@
         
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; font-size: 0.9rem; color: #94a3b8; margin-bottom: 5px; font-weight: bold; }
-        .input-group input, .input-group select { width: 100%; padding: 12px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; transition: var(--transition); font-size: 1rem; outline: none; cursor: pointer;}
+        .input-group input, .input-group select { width: 100%; padding: 12px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; transition: var(--transition); font-size: 1rem; outline: none; font-family: 'Times New Roman', Times, serif; cursor: pointer;}
         .input-group input:focus, .input-group select:focus { border-color: var(--accent); }
         .input-group select option { background: var(--bg-card); color: white; }
         
@@ -146,7 +146,7 @@
         .btn-upload:hover { background: var(--primary); }
         
         .dl-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
-        .btn-dl-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--primary); padding: 10px; border-radius: 10px; font-size: 0.85rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s;}
+        .btn-dl-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--primary); padding: 10px; border-radius: 10px; font-size: 0.9rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s;}
         .btn-dl-item:hover { background: var(--primary); color: white;}
         .btn-dl-full { grid-column: span 2; background: rgba(245, 158, 11, 0.1); color: var(--accent); border-color: rgba(245, 158, 11, 0.3); }
         .btn-dl-full:hover { background: var(--accent); color: white; }
@@ -194,7 +194,7 @@
         /* --- KOTAK KOORDINAT --- */
         .coord-display { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--bg-card); padding: 10px 25px; border-radius: 50px; border: 2px solid var(--primary); color: #cbd5e1; font-size: 0.95rem; font-weight: bold; z-index: 1000; pointer-events: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;}
 
-        /* --- LEGENDA (MURNI LEAFLET KANAN BAWAH) --- */
+        /* --- LEGENDA --- */
         .legend-box { background: var(--glass); border-radius: 15px; padding: 18px; border: 1px solid rgba(255,255,255,0.1); width: 250px; color: white; font-size: 0.9rem; max-height: 400px; overflow-y: auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 10px; margin-right: 10px; pointer-events: auto; }
         .legend-title { font-size: 0.95rem; color: var(--accent); margin-bottom: 12px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         .legend-color { width: 14px; height: 14px; border-radius: 3px; display: inline-block; margin-right: 8px; border: 1px solid rgba(255,255,255,0.2); }
@@ -242,7 +242,7 @@
         </button>
     </div>
 
-    <div id="auth-overlay" style="display: none; opacity: 0;">
+    <div id="auth-overlay">
         <div class="auth-card auth-form active" id="form-login">
             <button class="btn-close-auth" onclick="tutupLogin()"><i class="fas fa-times"></i></button>
             <div class="login-brand" style="margin-bottom:20px; font-weight:bold; font-size:1.2rem; color:var(--accent);"><i class="fas fa-shield-halved"></i> PORTAL MASUK</div>
@@ -465,7 +465,7 @@
 
                 <div class="sidebar-section-title" id="title-unduh"><i class="fas fa-cloud-arrow-down"></i> Unduh Data Dasar</div>
                 <div class="dl-group" id="btn-group-unduh">
-                    <button class="btn-dl-item" onclick="downloadData('batas_administrasi.zip')">Admin</button>
+                    <button class="btn-dl-item" onclick="downloadData('batas_administrasi.zip')">Admin (ZIP)</button>
                     <button class="btn-dl-item" onclick="downloadData('pl_polan.zip')">Guna Lahan</button>
                     <button class="btn-dl-item btn-dl-full" onclick="downloadData('persil_polan.zip')">Persil Tanah / ZNT</button>
                 </div>
@@ -543,6 +543,7 @@
             document.getElementById('visitor-count').innerText = visits.toLocaleString('id-ID');
         }
 
+        // --- FUNGSI TOAST WELCOME POPUP ---
         function showToast(msg) {
             let toast = document.getElementById("toast");
             document.getElementById("toast-msg").innerText = msg;
@@ -594,12 +595,12 @@
                 }
             } else {
                 document.getElementById('auth-overlay').style.display = "flex";
-                setTimeout(() => { document.getElementById('auth-overlay').style.opacity = "1"; }, 10);
+                setTimeout(() => { document.getElementById('auth-overlay').classList.add('active'); }, 10);
             }
         }
 
         function tutupLogin() {
-            document.getElementById('auth-overlay').style.opacity = "0";
+            document.getElementById('auth-overlay').classList.remove('active');
             setTimeout(() => { document.getElementById('auth-overlay').style.display = "none"; }, 300);
         }
 
@@ -661,7 +662,7 @@
             sessionStorage.setItem("userRole", role);
             userRole = role;
 
-            document.getElementById('auth-overlay').style.opacity = "0";
+            document.getElementById('auth-overlay').classList.remove('active');
             setTimeout(() => {
                 document.getElementById('auth-overlay').style.display = "none";
                 updateLoginButtonUI();
@@ -1119,7 +1120,7 @@
                         matchCount++;
                         bounds.extend(layer.getBounds());
                     } else {
-                        layer.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 }); 
+                        layer.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 }); // Hide
                     }
                 });
             }
@@ -1141,7 +1142,7 @@
                             matchCount++;
                             bounds.extend(layer.getBounds());
                         } else {
-                            layer.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 }); 
+                            layer.setStyle({ opacity: 0, fillOpacity: 0, weight: 0 }); // Hide
                         }
                     });
                 } else {
@@ -1172,6 +1173,8 @@
         // --- ANALISIS GEOSPASIAL (ROUTING & BUFFER) ---
         let routingControl = null;
         let isRoutingMode = false;
+        let routeWaypoints = [];
+        let routingMarkers = [];
         
         function toggleRouting() {
             let btn = document.getElementById('btn-routing');
@@ -1180,52 +1183,77 @@
                 btn.classList.add('active');
                 btn.innerHTML = '<i class="fas fa-times"></i> Batalkan Rute';
                 document.getElementById('route-toast').style.display = 'block';
-                showToast("Mode Routing Aktif. Klik 2 Titik di Peta (Awal & Tujuan).");
-                
-                if(routingControl) map.removeControl(routingControl);
-                
-                routingControl = L.Routing.control({
-                    waypoints: [],
-                    routeWhileDragging: false,
-                    addWaypoints: false,
-                    fitSelectedRoutes: true,
-                    show: false, 
-                    createMarker: function(i, wp, nWps) {
-                        return L.marker(wp.latLng, { draggable: true, icon: L.divIcon({ className: 'custom-pin', html: (i===0) ? '<i class="fas fa-a" style="color:white; background:#3b82f6; border-radius:50%; padding:8px;"></i>' : '<i class="fas fa-b" style="color:white; background:#ef4444; border-radius:50%; padding:8px;"></i>' }) });
-                    }
-                }).addTo(map);
-
-                routingControl.on('routesfound', function(e) {
-                    var routes = e.routes;
-                    var summary = routes[0].summary;
-                    document.getElementById('route-dist').innerText = (summary.totalDistance / 1000).toFixed(2) + " KM";
-                });
-
+                showToast("Mode Routing Aktif. Silakan klik Titik A (Asal) di peta.");
                 map.on('click', onMapClickRouting);
+                map.getContainer().style.cursor = 'crosshair';
             } else {
                 isRoutingMode = false;
                 btn.classList.remove('active');
                 btn.innerHTML = '<i class="fas fa-route"></i> Hitung Rute (Titik A ke B)';
                 document.getElementById('route-toast').style.display = 'none';
-                document.getElementById('route-dist').innerText = "0";
-                
+                document.getElementById('route-dist').innerText = "0 KM";
                 map.off('click', onMapClickRouting);
-                if(routingControl) map.removeControl(routingControl);
-                routingControl = null;
+                map.getContainer().style.cursor = '';
+                bersihkanRute();
                 showToast("Mode Routing dimatikan.");
             }
         }
 
         function onMapClickRouting(e) {
-            if(!routingControl) return;
-            let wps = routingControl.getWaypoints().filter(wp => wp.latLng !== null);
-            if (wps.length < 2) {
-                wps.push(L.Routing.waypoint(e.latlng));
-                routingControl.setWaypoints(wps);
-            } else {
-                routingControl.setWaypoints([L.Routing.waypoint(e.latlng)]);
-                document.getElementById('route-dist').innerText = "0";
+            if (!isRoutingMode) return;
+
+            if (routeWaypoints.length >= 2) {
+                bersihkanRute(); // Reset kalau udah ada 2 titik
             }
+
+            routeWaypoints.push(e.latlng);
+            
+            let markerIcon = (routeWaypoints.length === 1) ? 
+                L.divIcon({ className: 'custom-pin', html: '<i class="fas fa-map-pin" style="color:white; background:#3b82f6; border-radius:50%; padding:8px;"></i>' }) : 
+                L.divIcon({ className: 'custom-pin', html: '<i class="fas fa-location-dot" style="color:white; background:#ef4444; border-radius:50%; padding:8px;"></i>' });
+                
+            let marker = L.marker(e.latlng, { icon: markerIcon }).addTo(map);
+            routingMarkers.push(marker);
+
+            if (routeWaypoints.length === 1) {
+                showToast("Titik A dipilih. Sekarang klik Titik B (Tujuan) di peta.");
+            } else if (routeWaypoints.length === 2) {
+                showToast("Menghitung rute tercepat via OSRM Backend...");
+                
+                // Gunakan LRM standard (online) biar akurat sesuai jalan raya global
+                routingControl = L.Routing.control({
+                    waypoints: routeWaypoints,
+                    routeWhileDragging: false,
+                    addWaypoints: false,
+                    show: false, // Sembunyikan panel instruksi jelek
+                    createMarker: function() { return null; }, 
+                    lineOptions: {
+                        styles: [{color: '#3b82f6', opacity: 0.8, weight: 6}]
+                    }
+                }).addTo(map);
+
+                routingControl.on('routesfound', function(e) {
+                    let routes = e.routes;
+                    let summary = routes[0].summary;
+                    document.getElementById('route-dist').innerText = (summary.totalDistance / 1000).toFixed(2) + " KM";
+                    showToast("Rute berhasil ditemukan!");
+                });
+                
+                routingControl.on('routingerror', function() {
+                    showToast("Gagal menghitung rute. Pastikan Anda terkoneksi ke Internet.");
+                });
+            }
+        }
+
+        function bersihkanRute() {
+            if(routingControl) {
+                map.removeControl(routingControl);
+                routingControl = null;
+            }
+            routingMarkers.forEach(m => map.removeLayer(m));
+            routingMarkers = [];
+            routeWaypoints = [];
+            document.getElementById('route-dist').innerText = "0 KM";
         }
 
         function buatBuffer() {
@@ -1305,7 +1333,6 @@
             event.target.value = ''; 
         }
 
-        // --- MANAJEMEN MENU SIDEBAR UNTUK HASIL DIGITASI ---
         function buatMenuDiSidebar(id, name, layer) {
             let c = document.getElementById('user-layers-container');
             if(c.innerHTML === "") c.innerHTML = '<div class="sidebar-section-title" style="margin-top: 25px;"><i class="fas fa-folder-open"></i> Data Unggahan & Digitasi</div>';
